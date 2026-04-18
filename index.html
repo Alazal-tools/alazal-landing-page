@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجموعة الأزل التعليمية</title>
+    <title>مجموعة الأزل | Alazal Group</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Font Face Declarations for DIN Next LT Arabic */
@@ -35,31 +35,48 @@
         /* Apply the font to the whole body */
         body {
             font-family: 'DIN Next LT Arabic', sans-serif;
+            scroll-behavior: smooth;
         }
     </style>
 </head>
-<body class="bg-[#110D3B] text-white flex flex-col min-h-screen">
-    <nav class="fixed top-0 w-full bg-[#110D3B]/95 backdrop-blur-sm z-50 border-b border-white/10">
+<body class="bg-[#110D3B] text-white flex flex-col min-h-screen relative">
+    
+    <nav class="fixed top-0 w-full bg-[#110D3B] z-50 border-b border-white/10">
         <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <div class="flex gap-8 items-center">
+            
+            <div class="hidden md:flex gap-8 items-center">
                 <a href="#home" class="hover:text-[#1CE69B] transition-colors font-medium">الرئيسية</a>
                 <a href="#about" class="hover:text-[#1CE69B] transition-colors font-medium">من نحن</a>
                 <a href="#entities" class="hover:text-[#1CE69B] transition-colors font-medium">مؤسساتنا</a>
                 <a href="#contact" class="hover:text-[#1CE69B] transition-colors font-medium">تواصل معنا</a>
             </div>
-            <img src="alazal-new-logo-w.png" alt="الأزل" class="h-12">
+
+            <button id="mobile-menu-btn" class="md:hidden text-[#1CE69B] focus:outline-none transition-colors">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+
+            <img src="alazal-new-logo-w.png" alt="الأزل" class="h-10 md:h-12">
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden flex-col bg-[#110D3B] border-b border-white/20 absolute w-full left-0 px-6 py-8 gap-6 shadow-[0_20px_50px_rgba(0,0,0,0.5)]">
+            <a href="#home" class="hover:text-[#1CE69B] transition-colors font-bold text-xl border-b border-white/5 pb-4">الرئيسية</a>
+            <a href="#about" class="hover:text-[#1CE69B] transition-colors font-bold text-xl border-b border-white/5 pb-4">من نحن</a>
+            <a href="#entities" class="hover:text-[#1CE69B] transition-colors font-bold text-xl border-b border-white/5 pb-4">مؤسساتنا</a>
+            <a href="#contact" class="hover:text-[#1CE69B] transition-colors font-bold text-xl pb-2">تواصل معنا</a>
         </div>
     </nav>
 
     <section id="home" class="min-h-screen flex items-center pt-20">
-        <div class="max-w-7xl mx-auto px-6 py-20 text-center">
-            <h1 class="text-6xl md:text-7xl font-bold mb-6 text-white">
+        <div class="max-w-7xl mx-auto px-6 py-20 text-center mt-8 md:mt-0">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 text-white leading-tight">
                 مجموعة <span class="text-[#1CE69B]">الأزل</span> التعليمية
             </h1>
-            <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
+            <p class="text-lg md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto leading-relaxed font-medium">
                 خيار الطالب والأهل. منذ عام 2012 في بغداد، نهدف إلى صناعة طالب واثق، منظم، ومهيأ علمياً ونفسياً للنجاح.
             </p>
-            <a href="#entities" class="inline-block bg-[#1CE69B] text-[#110D3B] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#15b87f] transition-all hover:scale-105">
+            <a href="#entities" class="inline-block bg-[#1CE69B] text-[#110D3B] px-8 md:px-10 py-4 rounded-full font-bold text-lg hover:bg-[#15b87f] transition-all hover:scale-105 shadow-lg shadow-[#1CE69B]/20">
                 تعرف على مؤسساتنا
             </a>
         </div>
@@ -67,10 +84,10 @@
 
     <section id="about" class="py-20 bg-white/5">
         <div class="max-w-5xl mx-auto px-6">
-            <blockquote class="text-2xl md:text-3xl leading-relaxed text-center mb-8 font-medium">
+            <blockquote class="text-xl md:text-3xl leading-relaxed text-center mb-8 font-medium">
                 "نعمل جاهدين على توفير بيئة تعليمية تُبرز الأفضل في كُل طالب بأحدث الأساليب التربوية المبتكرة، بالتركيز على المُدرس والمناهج بما يخدم الطالب، وبناء أجيال تتحصّن بالمعرفة والإبداع والتعلم المستمر، تساهم بفاعلية في تطوير المجتمع."
             </blockquote>
-            <p class="text-[#1CE69B] text-xl text-center font-bold">
+            <p class="text-[#1CE69B] text-lg md:text-xl text-center font-bold">
                 محمد صالح - الشريك المؤسس لمجموعة الأزل
             </p>
         </div>
@@ -78,47 +95,47 @@
 
     <section class="py-20">
         <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-5xl font-bold text-center mb-16">قيمنا</h2>
-            <div class="grid md:grid-cols-5 gap-8">
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">قيمنا</h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-8">
                 <div class="text-center group">
-                    <div class="w-20 h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
-                        <svg class="w-10 h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold">الأمانة العلمية</h3>
+                    <h3 class="text-lg md:text-xl font-bold">الأمانة العلمية</h3>
                 </div>
                 <div class="text-center group">
-                    <div class="w-20 h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
-                        <svg class="w-10 h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold">احترام الطالب</h3>
+                    <h3 class="text-lg md:text-xl font-bold">احترام الطالب</h3>
                 </div>
-                <div class="text-center group">
-                    <div class="w-20 h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
-                        <svg class="w-10 h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="text-center group col-span-2 md:col-span-1">
+                    <div class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold">الشراكة مع الأهل</h3>
+                    <h3 class="text-lg md:text-xl font-bold">الشراكة مع الأهل</h3>
                 </div>
                 <div class="text-center group">
-                    <div class="w-20 h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
-                        <svg class="w-10 h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold">الإلتزام</h3>
+                    <h3 class="text-lg md:text-xl font-bold">الإلتزام</h3>
                 </div>
                 <div class="text-center group">
-                    <div class="w-20 h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
-                        <svg class="w-10 h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4 bg-[#1CE69B]/10 rounded-full flex items-center justify-center group-hover:bg-[#1CE69B]/20 transition-all">
+                        <svg class="w-8 h-8 md:w-10 md:h-10 text-[#1CE69B]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-bold">العدالة</h3>
+                    <h3 class="text-lg md:text-xl font-bold">العدالة</h3>
                 </div>
             </div>
         </div>
@@ -126,7 +143,7 @@
 
     <section id="entities" class="flex-grow py-20 bg-white/5">
         <div class="max-w-7xl mx-auto px-6">
-            <h2 class="text-5xl font-bold text-center mb-16">مؤسساتنا</h2>
+            <h2 class="text-4xl md:text-5xl font-bold text-center mb-16">مؤسساتنا</h2>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                 
                 <div class="flex flex-col justify-between bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20 hover:border-[#1CE69B]/50 transition-all hover:scale-105">
@@ -242,5 +259,34 @@
             <p class="text-gray-400 font-medium">جميع الحقوق محفوظة © مجموعة الأزل التعليمية 2026</p>
         </div>
     </footer>
+
+    <script>
+        // Mobile menu toggle logic
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        const links = menu.querySelectorAll('a');
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            menu.classList.toggle('hidden');
+            menu.classList.toggle('flex');
+        });
+
+        // Close menu when clicking a link
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            });
+        });
+
+        // Close menu when clicking anywhere else
+        document.addEventListener('click', (e) => {
+            if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.add('hidden');
+                menu.classList.remove('flex');
+            }
+        });
+    </script>
 </body>
 </html>
