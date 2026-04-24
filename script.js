@@ -167,6 +167,9 @@
   // Stays horizontally centered the whole way — no rotation, no horizontal arc.
   // Initial "top" is deliberately 24% so the orbit rings (150 px radius)
   // never scrape the top of the viewport (would otherwise look like a line).
+  // p=0 top is recomputed from the DOM (chip position) on load/resize so it
+  // always sits above the "منذ 2010" chip regardless of viewport height or
+  // where the chip lands after layout.
   const HERO_PATH = [
     { p: 0.00, top: 11, left: 50, size: 70,  opa: 1 },    // ABOVE the 2010 chip
     { p: 0.35, top: 42, left: 50, size: 130, opa: 1 },    // growing as it descends
@@ -174,6 +177,22 @@
     { p: 0.88, top: 83, left: 50, size: 130, opa: 0.55 }, // shrinking into stats
     { p: 1.00, top: 88, left: 50, size: 20,  opa: 0    }, // absorbed
   ];
+
+  function measureHeroStart() {
+    const chip = hero && hero.querySelector('.chip');
+    const navEl = document.getElementById('nav');
+    if (!chip) return;
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    if (!vh) return;
+    const chipTop = chip.getBoundingClientRect().top + (window.scrollY || 0);
+    const navH = (navEl && navEl.offsetHeight) || 72;
+    const pointHalf = HERO_PATH[0].size / 2;
+    // Center the point so its BOTTOM edge is ~14px above the chip top,
+    // but never above (nav bottom + 24px).
+    let desiredY = chipTop - pointHalf - 14;
+    desiredY = Math.max(desiredY, navH + 24 + pointHalf);
+    HERO_PATH[0].top = clamp((desiredY / vh) * 100, 6, 30);
+  }
 
   function samplePath(p) {
     p = clamp(p, 0, 1);
@@ -317,14 +336,18 @@
     };
     window.addEventListener('scroll', onScrollLinked, { passive: true });
     window.addEventListener('resize', () => {
+      measureHeroStart();
       measureBeaconTravel();
       onScrollLinked();
     });
-    // Re-measure once fonts + images have settled.
+    // Re-measure once fonts + images have settled — fonts shift text metrics,
+    // so the chip may end up a few pixels higher/lower than the first paint.
     window.addEventListener('load', () => {
+      measureHeroStart();
       measureBeaconTravel();
       updateScrollLinked();
     });
+    measureHeroStart();
     measureBeaconTravel();
     updateScrollLinked();
   } else {

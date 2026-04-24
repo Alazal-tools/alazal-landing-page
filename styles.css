@@ -1183,19 +1183,21 @@ section { position: relative; }
 }
 .entity:hover .entity__frame img { transform: scale(1.06); }
 .entity__tag {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.35rem 0.9rem;
-  background: rgba(16, 0, 81, 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  /* Inline pill that sits next to the entity name inside the <h3>. */
+  display: inline-block;
+  vertical-align: middle;
+  margin-inline-start: 0.55rem;
+  padding: 0.2rem 0.7rem;
+  background: rgba(6, 255, 172, 0.08);
   color: var(--teal);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
   border-radius: 999px;
   border: 1px solid var(--teal-mid);
-  z-index: 2;
+  white-space: nowrap;
+  /* Don't inherit the h3's bold/large sizing beyond what we set above. */
+  line-height: 1.3;
+  letter-spacing: 0.02em;
 }
 .entity h3 {
   font-size: 1.25rem;
@@ -1488,12 +1490,14 @@ section { position: relative; }
 }
 
 .teacher__badge {
-  /* Upper-RIGHT corner. Just the logo — no wrapper decoration. */
+  /* Upper-RIGHT corner. Size adapts to the card via a % of the frame with
+     a minimum floor, so it reads well on both 145px mobile cards and
+     large desktop cards. */
   position: absolute;
-  top: 0.4rem;
-  right: 0.4rem;
-  width: 40px;
-  height: 40px;
+  top: 5%;
+  right: 5%;
+  width:  max(48px, 30%);
+  height: max(48px, 30%);
   z-index: 2;
   pointer-events: none;
 }
@@ -1502,7 +1506,7 @@ section { position: relative; }
   height: 100%;
   object-fit: contain;
   display: block;
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.55));
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.6));
 }
 
 .teacher:hover .teacher__frame,
@@ -1707,5 +1711,5 @@ section { position: relative; }
   .teacher__name { font-size: 0.9rem; }
   .teacher__subject { font-size: 0.78rem; }
   .tab { padding: 0.65rem 1rem; font-size: 0.88rem; }
-  .teacher__badge { font-size: 0.65rem; padding: 0.22rem 0.55rem; top: 0.45rem; }
+  /* Badge keeps its adaptive size (max(48px, 30%)) on small screens. */
 }
