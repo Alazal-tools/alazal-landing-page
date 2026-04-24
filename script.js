@@ -168,8 +168,8 @@
   // Initial "top" is deliberately 24% so the orbit rings (150 px radius)
   // never scrape the top of the viewport (would otherwise look like a line).
   const HERO_PATH = [
-    { p: 0.00, top: 24, left: 50, size: 70,  opa: 1 },    // under the 2010 chip
-    { p: 0.35, top: 44, left: 50, size: 130, opa: 1 },    // growing as it descends
+    { p: 0.00, top: 11, left: 50, size: 70,  opa: 1 },    // ABOVE the 2010 chip
+    { p: 0.35, top: 42, left: 50, size: 130, opa: 1 },    // growing as it descends
     { p: 0.70, top: 72, left: 50, size: 200, opa: 1 },    // largest, just above stats
     { p: 0.88, top: 83, left: 50, size: 130, opa: 0.55 }, // shrinking into stats
     { p: 1.00, top: 88, left: 50, size: 20,  opa: 0    }, // absorbed

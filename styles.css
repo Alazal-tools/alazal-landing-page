@@ -239,12 +239,14 @@ section { position: relative; }
      into the stats grid where it gets "absorbed". All positions and the
      size are applied via CSS custom properties set by JS. */
   position: fixed;
-  --gp-top:  24%;   /* JS-updated */
+  --gp-top:  11%;   /* JS-updated */
   --gp-left: 50%;   /* JS-updated */
   --gp-size: 70px;  /* JS-updated */
   --gp-rot:  0deg;  /* JS-updated (unused on hero) */
   --gp-opa:  1;     /* JS-updated */
-  top:  var(--gp-top);
+  /* Clamp: the point never rides higher than just-below-the-nav, so it
+     stays above the chip but never hides behind the nav on short viewports. */
+  top:  max(var(--gp-top), calc(var(--nav-h) + 28px));
   left: var(--gp-left);
   width:  var(--gp-size);
   height: var(--gp-size);
@@ -292,13 +294,20 @@ section { position: relative; }
    whole family moves together as the shape descends. */
 .genesis-orbit {
   position: fixed;
-  top:  var(--gp-top,  24%);
+  /* Same clamp as the point so rings never clip the viewport top. */
+  top:  max(var(--gp-top, 11%), calc(var(--nav-h) + 28px));
   left: var(--gp-left, 50%);
   width: 0;
   height: 0;
   pointer-events: none;
   z-index: 1;
   opacity: calc(var(--gp-opa, 1) * 0.9);
+  /* Scale the whole orbit in lockstep with the point's size — when the
+     shape is small, rings are small (never clip the top); when it grows,
+     the orbit expands around it. 140px is the reference / unscaled size. */
+  transform: scale(calc(var(--gp-size, 70px) / 140));
+  transform-origin: 50% 50%;
+  transition: transform 80ms linear;
 }
 .genesis-orbit[data-hidden="true"] {
   opacity: 0;
