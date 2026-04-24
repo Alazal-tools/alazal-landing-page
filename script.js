@@ -186,12 +186,22 @@
     if (!vh) return;
     const chipTop = chip.getBoundingClientRect().top + (window.scrollY || 0);
     const navH = (navEl && navEl.offsetHeight) || 72;
-    const pointHalf = HERO_PATH[0].size / 2;
-    // Center the point so its BOTTOM edge is ~14px above the chip top,
-    // but never above (nav bottom + 24px).
-    let desiredY = chipTop - pointHalf - 14;
-    desiredY = Math.max(desiredY, navH + 24 + pointHalf);
-    HERO_PATH[0].top = clamp((desiredY / vh) * 100, 6, 30);
+
+    // Available vertical slot between (nav bottom + margin) and (chip top - margin).
+    const slotTop    = navH + 12;
+    const slotBottom = chipTop - 14;
+    const slot       = Math.max(24, slotBottom - slotTop);
+
+    // If our default size doesn't fit in the slot, shrink it — don't push
+    // the point down into the chip.
+    const defaultSize = 70;
+    const fitSize = Math.min(defaultSize, slot);
+    HERO_PATH[0].size = Math.max(34, fitSize);
+
+    // Point center = midpoint of the slot → guaranteed above the chip and
+    // below the nav.
+    const centerY = (slotTop + slotBottom) / 2;
+    HERO_PATH[0].top = clamp((centerY / vh) * 100, 4, 28);
   }
 
   function samplePath(p) {
@@ -237,20 +247,25 @@
      ============================================================ */
   // Measure the distance the beacon must travel (from its rest slot above
   // the timeline title down to the 2010 marker). Cached, refreshed on resize.
+  // Walk up the offsetParent chain to get absolute page-Y. offsetTop is
+  // NOT affected by CSS transforms, so this reads the element's real
+  // rest position regardless of reveal animations.
+  const pageOffsetTop = (el) => {
+    let y = 0;
+    while (el) { y += el.offsetTop; el = el.offsetParent; }
+    return y;
+  };
+
   let beaconTravel = 0;
   const measureBeaconTravel = () => {
     if (!timelineBeacon || !firstTlItem) return;
-    // Temporarily freeze beacon at rest to measure.
-    const saved = timelineBeacon.style.getPropertyValue('--tl-progress');
-    timelineBeacon.style.setProperty('--tl-progress', '0');
-    timelineBeacon.style.visibility = 'hidden'; // avoid flash
-    // Force layout
-    const bRect = timelineBeacon.getBoundingClientRect();
-    const mRect = firstTlItem.getBoundingClientRect();
-    beaconTravel = Math.max(0, (mRect.top + 18) - (bRect.top + bRect.height / 2));
+    const itemTop  = pageOffsetTop(firstTlItem);
+    const beaconTop = pageOffsetTop(timelineBeacon);
+    const beaconH = timelineBeacon.offsetHeight;
+    // Aim the beacon's center at the first timeline dot's center
+    // (dot is 22px tall, top offset 8px inside tl-item → center = top + 19).
+    beaconTravel = Math.max(0, (itemTop + 19) - (beaconTop + beaconH / 2));
     timelineBeacon.style.setProperty('--tl-travel', beaconTravel + 'px');
-    timelineBeacon.style.visibility = '';
-    if (saved) timelineBeacon.style.setProperty('--tl-progress', saved);
   };
 
   if (!prefersReducedMotion) {
@@ -362,14 +377,15 @@
   revealTargets.forEach((el, i) => el.style.setProperty('--i', i));
 
   if ('IntersectionObserver' in window) {
+    // Toggle both ways — reveal as the user scrolls down, hide again when
+    // they scroll back up. No unobserve, so each cross of the threshold
+    // triggers an add/remove.
     const revealObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('is-visible');
-          revealObs.unobserve(e.target);
-        }
+        if (e.isIntersecting) e.target.classList.add('is-visible');
+        else e.target.classList.remove('is-visible');
       });
-    }, { threshold: 0.18, rootMargin: '0px 0px -60px 0px' });
+    }, { threshold: 0.28, rootMargin: '0px 0px -18% 0px' });
     revealTargets.forEach(el => revealObs.observe(el));
   } else {
     revealTargets.forEach(el => el.classList.add('is-visible'));

@@ -524,7 +524,9 @@ section { position: relative; }
 .hero {
   min-height: 100vh;
   min-height: 100dvh;
-  padding-top: calc(var(--nav-h) + 2rem);
+  /* Extra top padding gives the genesis point enough clearance above the
+     chip without getting clamped down behind the nav. */
+  padding-top: calc(var(--nav-h) + 5rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -787,19 +789,17 @@ section { position: relative; }
 
 .values__grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
+  /* Default: 2 cards per row (even on the smallest mobile). */
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(0.75rem, 2vw, 1.25rem);
   max-width: 1200px;
   margin-inline: auto;
 }
-/* 2 cols on tablets — 5th card spans both and is centered. */
-@media (min-width: 520px) {
-  .values__grid { grid-template-columns: repeat(2, 1fr); }
-  .values__grid > li:nth-child(5) {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: calc(50% - 0.625rem);
-  }
+/* Fifth card spans both columns and centers itself on narrow screens. */
+.values__grid > li:nth-child(5) {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: calc(50% - clamp(0.375rem, 1vw, 0.625rem));
 }
 /* 5 cols on desktop — each value gets its own column, 5th flows inline. */
 @media (min-width: 960px) {
@@ -833,22 +833,30 @@ section { position: relative; }
   box-shadow: 0 20px 48px -16px rgba(6, 255, 172, 0.25);
 }
 .value-card__icon {
-  width: clamp(36px, 5vw, 48px);
-  height: clamp(36px, 5vw, 48px);
-  margin: 0 auto 0.75rem;
+  width:  clamp(40px, 9vw, 52px);
+  height: clamp(40px, 9vw, 52px);
+  margin: 0 auto 0.6rem;
   color: var(--teal);
   flex-shrink: 0;
 }
 .value-card h4 {
-  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  font-size: clamp(1rem, 3.2vw, 1.15rem);
   font-weight: 700;
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.35rem;
   line-height: 1.25;
 }
 .value-card p {
-  font-size: clamp(0.78rem, 1.1vw, 0.9rem);
+  font-size: clamp(0.85rem, 2.6vw, 0.95rem);
   color: var(--text-muted);
   line-height: 1.55;
+}
+/* On desktop the 5-col layout forces small card widths, so scale sizes back
+   down in that range to avoid overflow. */
+@media (min-width: 960px) {
+  .value-card { padding: 1.1rem 0.9rem; }
+  .value-card__icon { width: 44px; height: 44px; }
+  .value-card h4 { font-size: 1rem; }
+  .value-card p  { font-size: 0.85rem; }
 }
 
 /* ============================================================
@@ -1023,13 +1031,16 @@ section { position: relative; }
   position: relative;
   padding: 0 60px 2.25rem 0;
   opacity: 0;
-  transform: translateX(40px);
-  transition: opacity var(--dur-slow) var(--ease-out),
-              transform var(--dur-slow) var(--ease-out);
+  transform: translateY(48px) scale(0.96);
+  filter: blur(2px);
+  transition: opacity 700ms var(--ease-out),
+              transform 700ms var(--ease-out),
+              filter 700ms var(--ease-out);
 }
 .tl-item.is-visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0);
 }
 .tl-item:last-child { padding-bottom: 0; }
 .tl-item::before {
