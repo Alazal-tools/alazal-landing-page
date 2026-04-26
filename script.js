@@ -181,27 +181,42 @@
   function measureHeroStart() {
     const chip = hero && hero.querySelector('.chip');
     const navEl = document.getElementById('nav');
-    if (!chip) return;
-    const vh = window.innerHeight || document.documentElement.clientHeight;
-    if (!vh) return;
-    const chipTop = chip.getBoundingClientRect().top + (window.scrollY || 0);
+    if (!chip || !hero) return;
+    const heroH = hero.offsetHeight ||
+                  window.innerHeight ||
+                  document.documentElement.clientHeight;
+    if (!heroH) return;
+    // Chip Y relative to the hero (since the point is now absolute inside hero).
+    const chipRect = chip.getBoundingClientRect();
+    const heroRect = hero.getBoundingClientRect();
+    const chipTopInHero = chipRect.top - heroRect.top;
     const navH = (navEl && navEl.offsetHeight) || 72;
 
-    // Available vertical slot between (nav bottom + margin) and (chip top - margin).
     const slotTop    = navH + 12;
-    const slotBottom = chipTop - 14;
+    const slotBottom = chipTopInHero - 14;
     const slot       = Math.max(24, slotBottom - slotTop);
 
-    // If our default size doesn't fit in the slot, shrink it — don't push
-    // the point down into the chip.
+    // Shrink the point if the slot is tight (don't shove it into the chip).
     const defaultSize = 70;
     const fitSize = Math.min(defaultSize, slot);
     HERO_PATH[0].size = Math.max(34, fitSize);
 
-    // Point center = midpoint of the slot → guaranteed above the chip and
-    // below the nav.
+    // Center the point in the safe slot (above chip, below nav).
     const centerY = (slotTop + slotBottom) / 2;
-    HERO_PATH[0].top = clamp((centerY / vh) * 100, 4, 28);
+    HERO_PATH[0].top = clamp((centerY / heroH) * 100, 4, 28);
+  }
+
+  function applyStaticHeroPoint() {
+    if (!point) return;
+    const isMobile = window.innerWidth < 768;
+    const s = HERO_PATH[0]; // first/only resting waypoint
+    const size = isMobile ? Math.max(38, s.size * 0.7) : s.size;
+    point.style.setProperty('--gp-top',  s.top  + '%');
+    point.style.setProperty('--gp-left', s.left + '%');
+    point.style.setProperty('--gp-size', size + 'px');
+    point.style.setProperty('--gp-opa',  '1');
+    point.setAttribute('data-hidden', 'false');
+    if (genesisOrbit) genesisOrbit.setAttribute('data-hidden', 'false');
   }
 
   function samplePath(p) {
@@ -276,32 +291,9 @@
       const scrollY = window.scrollY || window.pageYOffset;
       const isMobile = window.innerWidth < 768;
 
-      // 1. Genesis point: grow as user scrolls, then absorbed by the stats.
-      //    Same path on desktop and mobile (sizes scaled for screen).
-      if (point && hero) {
-        const p = clamp(scrollY / (vh * 0.85), 0, 1);
-        const s = samplePath(p);
-
-        // Mobile keeps the same trajectory but with smaller sizes.
-        const size = isMobile ? s.size * 0.55 : s.size;
-
-        point.style.setProperty('--gp-top',  s.top  + '%');
-        point.style.setProperty('--gp-left', s.left + '%');
-        point.style.setProperty('--gp-size', size + 'px');
-        point.style.setProperty('--gp-opa',  s.opa.toFixed(3));
-        point.setAttribute('data-hidden', p >= 0.995 ? 'true' : 'false');
-
-        if (genesisOrbit) {
-          genesisOrbit.setAttribute('data-hidden', p >= 0.995 ? 'true' : 'false');
-        }
-
-        // Energize the stats once the shape starts being absorbed.
-        const statsEl = document.querySelector('.hero__stats');
-        if (statsEl) {
-          if (p >= 0.72) statsEl.classList.add('is-energized');
-          else statsEl.classList.remove('is-energized');
-        }
-      }
+      // Hero point is now static — its position/size are set by
+      // applyStaticHeroPoint() on load/resize, NOT during scroll.
+      // (Stats energize is wired separately via IntersectionObserver below.)
 
       // 2. Timeline beacon.
       //    Desktop — descends to meet the 2010 marker as scroll advances.
@@ -352,43 +344,77 @@
     window.addEventListener('scroll', onScrollLinked, { passive: true });
     window.addEventListener('resize', () => {
       measureHeroStart();
+      applyStaticHeroPoint();
       measureBeaconTravel();
       onScrollLinked();
     });
-    // Re-measure once fonts + images have settled — fonts shift text metrics,
-    // so the chip may end up a few pixels higher/lower than the first paint.
+    // Re-measure once fonts + images have settled.
     window.addEventListener('load', () => {
       measureHeroStart();
+      applyStaticHeroPoint();
       measureBeaconTravel();
       updateScrollLinked();
     });
     measureHeroStart();
+    applyStaticHeroPoint();
     measureBeaconTravel();
     updateScrollLinked();
   } else {
-    if (point) point.setAttribute('data-hidden', 'true');
+    // Reduced motion — show the point statically without animations.
+    measureHeroStart();
+    applyStaticHeroPoint();
     if (timelineBeacon) timelineBeacon.setAttribute('data-hidden', 'true');
   }
 
   /* ============================================================
-     Reveal-on-scroll (timeline items, entity cards)
+     Stats energize — fires when the hero stats grid enters view.
      ============================================================ */
-  const revealTargets = document.querySelectorAll('.tl-item, .entity');
-  revealTargets.forEach((el, i) => el.style.setProperty('--i', i));
+  const statsEl = document.querySelector('.hero__stats');
+  if (statsEl && 'IntersectionObserver' in window) {
+    const statsObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          statsEl.classList.add('is-energized');
+          statsObs.unobserve(statsEl);
+        }
+      });
+    }, { threshold: 0.5 });
+    statsObs.observe(statsEl);
+  } else if (statsEl) {
+    statsEl.classList.add('is-energized');
+  }
+
+  /* ============================================================
+     Reveal-on-scroll (timeline toggles both ways; entities one-shot)
+     ============================================================ */
+  const tlItems = document.querySelectorAll('.tl-item');
+  const entityCards = document.querySelectorAll('.entity');
+  tlItems.forEach((el, i) => el.style.setProperty('--i', i));
+  entityCards.forEach((el, i) => el.style.setProperty('--i', i));
 
   if ('IntersectionObserver' in window) {
-    // Toggle both ways — reveal as the user scrolls down, hide again when
-    // they scroll back up. No unobserve, so each cross of the threshold
-    // triggers an add/remove.
-    const revealObs = new IntersectionObserver(entries => {
+    // Timeline — toggle both ways: reveal scrolling down, hide scrolling up.
+    const tlObs = new IntersectionObserver(entries => {
       entries.forEach(e => {
         if (e.isIntersecting) e.target.classList.add('is-visible');
         else e.target.classList.remove('is-visible');
       });
     }, { threshold: 0.28, rootMargin: '0px 0px -18% 0px' });
-    revealTargets.forEach(el => revealObs.observe(el));
+    tlItems.forEach(el => tlObs.observe(el));
+
+    // Entities — one-shot reveal, stay visible after first appearance.
+    const entityObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          entityObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -40px 0px' });
+    entityCards.forEach(el => entityObs.observe(el));
   } else {
-    revealTargets.forEach(el => el.classList.add('is-visible'));
+    tlItems.forEach(el => el.classList.add('is-visible'));
+    entityCards.forEach(el => el.classList.add('is-visible'));
   }
 
   /* ============================================================
