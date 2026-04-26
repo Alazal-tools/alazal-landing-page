@@ -24,55 +24,55 @@
 
   const TEACHERS = [
     // Physics
-    { name: 'حكمت حسن', subject: 'physics', image: 'حكمت-حسن.png', badge: '+100' },
-    { name: 'حسن عبدالكاظم', subject: 'physics', image: 'حسن-عبدالكاظم.png' },
-    { name: 'محمد العبد', subject: 'physics', image: 'محمد-العبد.png' },
-    { name: 'حيدر مجيد', subject: 'physics', image: 'حيدر-مجيد.png' },
-    { name: 'حسن القزويني', subject: 'physics', image: 'حسن-القزويني.png' },
-    { name: 'محمد الساعدي', subject: 'physics', image: 'محمد-الساعدي.png' },
+    { name: 'حكمت حسن', subject: 'physics', image: 'حكمت-حسن.webp', badge: '+100' },
+    { name: 'حسن عبدالكاظم', subject: 'physics', image: 'حسن-عبدالكاظم.webp' },
+    { name: 'محمد العبد', subject: 'physics', image: 'محمد-العبد.webp' },
+    { name: 'حيدر مجيد', subject: 'physics', image: 'حيدر-مجيد.webp' },
+    { name: 'حسن القزويني', subject: 'physics', image: 'حسن-القزويني.webp' },
+    { name: 'محمد الساعدي', subject: 'physics', image: 'محمد-الساعدي.webp' },
     // Math
-    { name: 'قصي هاشم', subject: 'math', image: 'قصي-هاشم.png', badge: '+100' },
-    { name: 'صالح العبادي', subject: 'math', image: 'صالح-العبادي.png', badge: '+100' },
-    { name: 'حيدر سعدون', subject: 'math', image: 'حيدر-سعدون.png' },
-    { name: 'ضياء العوادي', subject: 'math', image: 'ضياء-العوادي.png' },
-    { name: 'همام الشمسي', subject: 'math', image: 'همام-شمسي.png' },
-    { name: 'حيدر العامري', subject: 'math', image: 'حيدر-العامري.png' },
-    { name: 'نادية السعدي', subject: 'math', image: 'نادية-السعدي.png' },
-    { name: 'علي نجم', subject: 'math', image: 'علي-نجم.png' },
-    { name: 'علي المشاط', subject: 'math', image: 'علي-المشاط.png' },
-    { name: 'محمد نمير', subject: 'math', image: 'محمد-نمير.png' },
+    { name: 'قصي هاشم', subject: 'math', image: 'قصي-هاشم.webp', badge: '+100' },
+    { name: 'صالح العبادي', subject: 'math', image: 'صالح-العبادي.webp', badge: '+100' },
+    { name: 'حيدر سعدون', subject: 'math', image: 'حيدر-سعدون.webp' },
+    { name: 'ضياء العوادي', subject: 'math', image: 'ضياء-العوادي.webp' },
+    { name: 'همام الشمسي', subject: 'math', image: 'همام-شمسي.webp' },
+    { name: 'حيدر العامري', subject: 'math', image: 'حيدر-العامري.webp' },
+    { name: 'نادية السعدي', subject: 'math', image: 'نادية-السعدي.webp' },
+    { name: 'علي نجم', subject: 'math', image: 'علي-نجم.webp' },
+    { name: 'علي المشاط', subject: 'math', image: 'علي-المشاط.webp' },
+    { name: 'محمد نمير', subject: 'math', image: 'محمد-نمير.webp' },
     // Chemistry
-    { name: 'خالد الانباري', subject: 'chemistry', image: 'خالد-الانباري.png', badge: '+100' },
-    { name: 'محمد الخليفة', subject: 'chemistry', image: 'محمد-الخليفة-الاصلي.png' },
-    { name: 'طارق الوائلي', subject: 'chemistry', image: 'طارق-الوائلي.png' },
-    { name: 'وسام نعمة', subject: 'chemistry', image: 'وسام-نعمة.png' },
-    { name: 'محمد حسون', subject: 'chemistry', image: 'محمد-حسون.png' },
-    { name: 'زينب الشالجي', subject: 'chemistry', image: 'زينب-الشالجي.png' },
-    { name: 'همسة محمد', subject: 'chemistry', image: 'همسة-محمد.png' },
+    { name: 'خالد الانباري', subject: 'chemistry', image: 'خالد-الانباري.webp', badge: '+100' },
+    { name: 'محمد الخليفة', subject: 'chemistry', image: 'محمد-الخليفة-الاصلي.webp' },
+    { name: 'طارق الوائلي', subject: 'chemistry', image: 'طارق-الوائلي.webp' },
+    { name: 'وسام نعمة', subject: 'chemistry', image: 'وسام-نعمة.webp' },
+    { name: 'محمد حسون', subject: 'chemistry', image: 'محمد-حسون.webp' },
+    { name: 'زينب الشالجي', subject: 'chemistry', image: 'زينب-الشالجي.webp' },
+    { name: 'همسة محمد', subject: 'chemistry', image: 'همسة-محمد.webp' },
     // Biology
-    { name: 'د. حيدر ناصر', subject: 'biology', image: 'حيدر-ناصر.png', badge: '+100' },
-    { name: 'غالب كاظم', subject: 'biology', image: 'غالب-كاظم.png' },
-    { name: 'د. سندس صالح', subject: 'biology', image: 'سندس-صالح.png' },
+    { name: 'د. حيدر ناصر', subject: 'biology', image: 'حيدر-ناصر.webp', badge: '+100' },
+    { name: 'غالب كاظم', subject: 'biology', image: 'غالب-كاظم.webp' },
+    { name: 'د. سندس صالح', subject: 'biology', image: 'سندس-صالح.webp' },
     // Arabic
-    { name: 'د. نجم عبدالواحد', subject: 'arabic', image: 'نجم-عبدالواحد.png', badge: '+100' },
-    { name: 'عبدالهادي العبيدي', subject: 'arabic', image: 'عبدالهادي-العبيدي.png' },
-    { name: 'علي الدبيسي', subject: 'arabic', image: 'علي-الدبيسي.png' },
-    { name: 'منتظر الوردي', subject: 'arabic', image: 'منتظر-الوردي.png' },
-    { name: 'ضرغام الشمري', subject: 'arabic', image: 'ضرغام-الشمري.png' },
-    { name: 'محمد الجوراني', subject: 'arabic', image: 'محمد-الجوراني.png' },
-    { name: 'عبدالكريم نجف', subject: 'arabic', image: 'عبدالكريم-نجف.png' },
-    { name: 'جاسب هاشم', subject: 'arabic', image: 'جاسب.png' },
+    { name: 'د. نجم عبدالواحد', subject: 'arabic', image: 'نجم-عبدالواحد.webp', badge: '+100' },
+    { name: 'عبدالهادي العبيدي', subject: 'arabic', image: 'عبدالهادي-العبيدي.webp' },
+    { name: 'علي الدبيسي', subject: 'arabic', image: 'علي-الدبيسي.webp' },
+    { name: 'منتظر الوردي', subject: 'arabic', image: 'منتظر-الوردي.webp' },
+    { name: 'ضرغام الشمري', subject: 'arabic', image: 'ضرغام-الشمري.webp' },
+    { name: 'محمد الجوراني', subject: 'arabic', image: 'محمد-الجوراني.webp' },
+    { name: 'عبدالكريم نجف', subject: 'arabic', image: 'عبدالكريم-نجف.webp' },
+    { name: 'جاسب هاشم', subject: 'arabic', image: 'جاسب.webp' },
     // English
-    { name: 'قسور الخزرجي', subject: 'english', image: 'قسور-الخزرجي.png', badge: '+100' },
-    { name: 'علي الجبوري', subject: 'english', image: 'علي-الجبوري.png' },
-    { name: 'حيدر القريشي', subject: 'english', image: 'حيدر-القريشي.png' },
-    { name: 'وسن منذر', subject: 'english', image: 'وسن-منذر.png' },
-    { name: 'مصطفى الطائي', subject: 'english', image: 'مصطفى-الطائي.png' },
-    { name: 'زهراء ماجد', subject: 'english', image: 'زهراء ماجد.png' },
+    { name: 'قسور الخزرجي', subject: 'english', image: 'قسور-الخزرجي.webp', badge: '+100' },
+    { name: 'علي الجبوري', subject: 'english', image: 'علي-الجبوري.webp' },
+    { name: 'حيدر القريشي', subject: 'english', image: 'حيدر-القريشي.webp' },
+    { name: 'وسن منذر', subject: 'english', image: 'وسن-منذر.webp' },
+    { name: 'مصطفى الطائي', subject: 'english', image: 'مصطفى-الطائي.webp' },
+    { name: 'زهراء ماجد', subject: 'english', image: 'زهراء ماجد.webp' },
     // Single-member subjects
-    { name: 'عبدالرسول الحسني', subject: 'french', image: 'عبدالرسول-الحسني.png', badge: '+100' },
-    { name: 'ورود دانيال', subject: 'islamic', image: 'ورود-دانيال.png' },
-    { name: 'كفاح اسماعيل', subject: 'social', image: 'كفاح-اسماعيل.png' },
+    { name: 'عبدالرسول الحسني', subject: 'french', image: 'عبدالرسول-الحسني.webp', badge: '+100' },
+    { name: 'ورود دانيال', subject: 'islamic', image: 'ورود-دانيال.webp' },
+    { name: 'كفاح اسماعيل', subject: 'social', image: 'كفاح-اسماعيل.webp' },
   ];
 
   /* ---------- Inline SVG icon library (used by tabs) ---------- */
@@ -474,7 +474,7 @@
           b.title = 'ضمن كادر برنامج 100+';
           b.setAttribute('aria-label', 'من كادر برنامج 100+');
           const bImg = document.createElement('img');
-          bImg.src = 'public/1.png';
+          bImg.src = 'public/1.webp';
           bImg.alt = '';
           bImg.setAttribute('aria-hidden', 'true');
           b.appendChild(bImg);

@@ -542,7 +542,7 @@ section { position: relative; }
 .hero__bg {
   position: absolute;
   inset: 0;
-  background-image: url("public/gray-pattern.png");
+  background-image: url("public/gray-pattern.webp");
   background-size: 400px;
   background-repeat: repeat;
   opacity: 0.035;
