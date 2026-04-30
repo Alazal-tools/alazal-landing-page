@@ -461,9 +461,25 @@
 
       const frag = document.createDocumentFragment();
       list.forEach((t, i) => {
-        const card = document.createElement('article');
+        // Each card is now an anchor — taps open WhatsApp with a prefilled
+        // message that names the teacher being inquired about.
+        const card = document.createElement('a');
         card.className = 'teacher';
         card.style.setProperty('--i', i);
+        const msg = encodeURIComponent(`مرحباً، انا مهتم بمعرفة تفاصيل عن ${t.name}`);
+        card.href = `https://wa.me/9647818041198?text=${msg}`;
+        card.target = '_blank';
+        card.rel = 'noopener';
+        card.setAttribute('aria-label', `استفسر عن الأستاذ ${t.name} عبر واتساب`);
+        // GA4 + Clarity event on tap so we know which teachers convert.
+        card.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'teacher_whatsapp_click', { teacher: t.name, subject: t.subject });
+          }
+          if (typeof clarity === 'function') {
+            clarity('event', 'teacher_whatsapp_click');
+          }
+        });
 
         const frame = document.createElement('div');
         frame.className = 'teacher__frame';
@@ -571,6 +587,26 @@
   }
 
   /* ============================================================
+     CTA tracking — fire GA4/Clarity events when users click any
+     element with data-cta. Lets you measure conversions per CTA.
+     ============================================================ */
+  document.addEventListener('click', (e) => {
+    const cta = e.target.closest('[data-cta]');
+    if (!cta) return;
+    const name = cta.getAttribute('data-cta');
+    if (typeof gtag === 'function') {
+      gtag('event', 'cta_click', { cta_name: name });
+      // Fire the canonical Google Ads conversion event for form-leads.
+      if (name.startsWith('program_') || name === 'institute_registration') {
+        gtag('event', 'generate_lead', { method: name });
+      }
+    }
+    if (typeof clarity === 'function') {
+      clarity('event', 'cta_' + name);
+    }
+  });
+
+  /* ============================================================
      FOOTER — contact cards with WhatsApp + social links
      ============================================================ */
   const CONTACTS = [
@@ -590,7 +626,7 @@
       instagram: 'alazal_schools',
       tgChannel: 'alazal_schools',
       tgContact: 'az_sup',
-      facebook: 'alazal_schools',
+      facebook: 'alazal.schools',
     },
     {
       name: 'ثانوية الأزل الأهلية للبنين',
@@ -599,7 +635,7 @@
       instagram: 'alazal_schools',
       tgChannel: 'alazal_schools',
       tgContact: 'az_sup',
-      facebook: 'alazal_schools',
+      facebook: 'alazal.schools',
     },
     {
       name: 'منصة الأزل التعليمية',

@@ -1,0 +1,16 @@
+{
+  "name": "مجموعة الأزل التعليمية",
+  "short_name": "الأزل",
+  "description": "إرثٌ أكاديمي منذ 2010 — خيار الطالب والأهل",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#100051",
+  "theme_color": "#100051",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "public/SVG/MAIN SHAPE TEAL.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
