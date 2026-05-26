@@ -1,1 +1,8 @@
 .info/Clarity_مجموعة_الأزل_Tap_Mobile_04-30-2026 03 36 PM.csv
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
