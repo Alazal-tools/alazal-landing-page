@@ -8,8 +8,8 @@ node_modules/**
 test-results/**
 playwright-report/**
 scripts/**
-src/brand-scene.js
-data/district.json
+src/**
+data/**
 *.md
 package.json
 package-lock.json

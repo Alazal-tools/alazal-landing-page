@@ -873,7 +873,7 @@ select:focus-visible {
   display: none;
 }
 .motion-story .story {
-  height: var(--story-height);
+  height: var(--story-height, 455svh);
 }
 .motion-story .story-stage {
   position: sticky;
@@ -904,6 +904,13 @@ select:focus-visible {
     calc(var(--enter) * 32px - var(--exit) * 40px),
     0
   );
+}
+.motion-story .story-panel:first-child {
+  opacity: 1;
+  visibility: visible;
+}
+.motion-story #motion-toggle[hidden] {
+  display: inline-block !important;
 }
 .motion-story .story-navigation {
   position: absolute;

@@ -66,6 +66,17 @@ ${facilityLabels.map(l=>`<g class="facility-pin" data-map-building="${l.id}" tra
 
 </g></svg>`;
 
+// Keep every polygon, stroke and paint order, but move the immutable geography
+// out of the live document. Labels, routes and pins remain interactive vectors.
+const baseStart = map.indexOf('<path class="district-plinth"');
+const baseEnd = map.indexOf('<text class="river-name"');
+const arrivalCss = await readFile('arrival.css', 'utf8');
+const baseCss = arrivalCss.slice(arrivalCss.indexOf('.district-plinth {'), arrivalCss.indexOf('.river-name {'));
+const defs = map.match(/<defs>[\s\S]*?<\/defs>/)[0];
+const base = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1270 910"><style>${baseCss}</style>${defs}${map.slice(baseStart, baseEnd)}</g></svg>`;
+await writeFile('public/district-base.svg', base);
+const interactiveMap = map.slice(0, baseStart) + '<g clip-path="url(#district-clip)">' + map.slice(baseEnd);
+
 const socialLinks = (c) => [
   ['إنستغرام', `https://www.instagram.com/${c.instagram}/`],
   ['قناة تيليغرام', `https://t.me/${c.telegram}`],
@@ -83,7 +94,8 @@ const arrival = `<!-- arrival:start -->
               <div class="arrival-origin-control"><label for="arrival-origin">جاي من وين؟</label><select id="arrival-origin" aria-label="اختَر نقطة انطلاقك">${Object.entries(origins).map(([id,name])=>`<option value="${id}" ${id==='square'?'selected':''} ${id==='institute'?'disabled':''}>${name}</option>`).join('')}</select><span class="route-mode" title="مسار مشي">↝</span></div>
               <div class="district-topline"><span class="district-key"><i></i> الأزل</span><div class="map-tools" role="group" aria-label="عرض الخريطة"><button type="button" id="map-zoom-in" aria-label="تكبير الخريطة" title="تكبير">+</button><button type="button" id="map-zoom-out" aria-label="تصغير الخريطة" title="تصغير" disabled>−</button><button type="button" id="replay-arrival" aria-label="إعادة عرض الخريطة والمسار" title="إعادة العرض">↺</button></div></div>
               <div class="district-viewport" id="district-viewport"><div class="district-model">
-                ${map}
+                <img class="district-base" src="public/district-base.svg" width="1270" height="910" loading="lazy" decoding="async" alt=""/>
+                ${interactiveMap}
                 ${landmarkLabels.map(l=>`<button type="button" class="map-label" data-landmark="${l.id}" style="--x:${l.label[0]/12.7}%;--y:${l.label[1]/9.1}%" aria-label="ابدأ من ${l.name}" title="ابدأ من ${l.name}">${l.name}</button>`).join('')}
                 ${facilityLabels.map(l=>`<button type="button" class="facility-label" data-map-destination="${l.id}" style="--x:${l.label[0]/12.7}%;--y:${l.label[1]/9.1}%" aria-label="الوصول إلى ${destinations[l.id].fullName}">${l.name}${l.id==='boys'?'<small>عيادة حرير</small>':''}</button>`).join('')}
                 <div class="arrival-inset" data-inset="institute" role="img" aria-label="مجمع الزهراء: المعهد في الطابق الثالث، والمكتبة في الطابق الأول">

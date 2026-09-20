@@ -1,6 +1,3 @@
-import { initArrival } from './src/arrival.js';
-
-initArrival();
 const $ = (selector, scope = document) => scope.querySelector(selector);
 const $$ = (selector, scope = document) => [
   ...scope.querySelectorAll(selector),
@@ -63,6 +60,11 @@ const root = document.documentElement;
 const story = $("#story");
 const stage = $(".story-stage");
 const panels = $$(".story-panel");
+const copies = panels.map(panel => $(".story-copy", panel));
+const panelStates = panels.map(() => "");
+const statement = $(".word-reveal");
+const words = $$("span", statement);
+const fallback = $(".object-fallback");
 const lastStoryIndex = panels.length - 1;
 const storyRange = lastStoryIndex + 0.5;
 // Orthographic projection of the beveled shape's 2.15-unit silhouette.
@@ -84,6 +86,9 @@ let currentChapter = -1;
 let heroAngle = 0;
 let lastPose = "";
 let motionPaused = false;
+let previousProgress = -1;
+let previousEntrance = -1;
+let previousReading = -1;
 const motionButton = $("#motion-toggle");
 motionButton.hidden = false;
 
@@ -94,16 +99,18 @@ function configureStory() {
   story.style.setProperty("--story-height", `${panels.length * 85 + 30}svh`);
   root.classList.toggle("motion-story", enhanced);
   root.classList.toggle("reading-story", !enhanced);
-  panels.forEach((panel) => {
+  panels.forEach((panel, i) => {
     panel.style.opacity = "";
     panel.style.visibility = "";
-    $(".story-copy", panel).style.opacity = "";
+    copies[i].style.opacity = "";
     panel.removeAttribute("aria-hidden");
     panel.inert = false;
     panel.style.removeProperty("--enter");
     panel.style.removeProperty("--exit");
   });
   currentChapter = -1;
+  panelStates.fill("");
+  previousProgress = previousEntrance = previousReading = -1;
   motionButton.setAttribute("aria-pressed", String(!enhanced));
   motionButton.textContent = enhanced
     ? "قراءة دون حركة"
@@ -154,45 +161,48 @@ function update() {
         lastStoryIndex,
       )
     : 0;
-  if (enhanced) {
+  const entrance = 1 - smooth((scrollY - storyTop * 0.35) / Math.max(1, storyTop * 0.65));
+  // All geometry reads precede style writes. Dot anchors live outside the
+  // animated photo layers, so their boxes do not depend on --enter/--exit.
+  const statementTop = statement.getBoundingClientRect().top;
+  const heroBox = anchorBox(anchors[0]);
+  const a = Math.floor(p);
+  const b = Math.min(lastStoryIndex, a + 1);
+  const first = enhanced ? anchorBox(anchors[a + 1]) : null;
+  const second = enhanced ? (a === b ? first : anchorBox(anchors[b + 1])) : null;
+  const heroVisible = enhanced || hero.getBoundingClientRect().bottom > 0;
+  if (enhanced && (p !== previousProgress || entrance !== previousEntrance)) {
+    previousProgress = p;
+    previousEntrance = entrance;
     setChapter(Math.round(p));
     panels.forEach((panel, i) => {
       const distance = p - i;
       const opacity = smooth((0.64 - Math.abs(distance)) / 0.32);
+      const enter = Math.max(i === 0 ? entrance : 0, smooth((-distance - 0.06) / 0.62));
+      const exit = smooth((distance - 0.08) / 0.62);
+      const copyOpacity = smooth((0.49 - Math.abs(distance)) / 0.2);
+      const state = `${opacity},${enter},${exit},${copyOpacity}`;
+      if (panelStates[i] === state) return;
+      panelStates[i] = state;
       panel.style.opacity = String(opacity);
       panel.style.visibility = opacity > 0 ? "visible" : "hidden";
-      const entrance =
-        i === 0
-          ? 1 -
-            smooth((scrollY - storyTop * 0.35) / Math.max(1, storyTop * 0.65))
-          : 0;
-      panel.style.setProperty(
-        "--enter",
-        String(Math.max(entrance, smooth((-distance - 0.06) / 0.62))),
-      );
-      $(".story-copy", panel).style.opacity = String(
-        smooth((0.49 - Math.abs(distance)) / 0.2),
-      );
-      panel.style.setProperty(
-        "--exit",
-        String(smooth((distance - 0.08) / 0.62)),
-      );
+      panel.style.setProperty("--enter", String(enter));
+      copies[i].style.opacity = String(copyOpacity);
+      panel.style.setProperty("--exit", String(exit));
     });
     progressBar.style.transform = `scaleX(${(p + 0.08) / (lastStoryIndex + 0.08)})`;
   }
 
-  const statement = $(".word-reveal");
-  const statementTop = statement.getBoundingClientRect().top;
   const reading = clamp(
     (innerHeight * 0.82 - statementTop) / (innerHeight * 0.55),
   );
-  $$(".word-reveal span").forEach((word, index, words) => {
+  if (reading !== previousReading) words.forEach((word, index) => {
     word.classList.toggle(
       "is-read",
       !enhanced || reading >= index / words.length,
     );
   });
-  const heroBox = anchorBox(anchors[0]);
+  previousReading = reading;
   let position = { ...heroBox };
   // Start flush with the original dot, including the logo's rotation.
   // Depth and rotation develop only after the visitor starts the story.
@@ -201,11 +211,7 @@ function update() {
     const transition = smooth(
       (scrollY - storyTop * 0.1) / Math.max(1, storyTop * 0.9),
     );
-    const a = Math.floor(p);
-    const b = Math.min(lastStoryIndex, a + 1);
     const local = smooth((p - a - 0.08) / 0.84);
-    const first = anchorBox(anchors[a + 1]);
-    const second = anchorBox(anchors[b + 1]);
     const point = {
       x:
         mix(first.x, second.x, local) -
@@ -246,11 +252,11 @@ function update() {
   const visible =
     position.y + position.size > 0 &&
     position.y - position.size < innerHeight &&
-    (enhanced || hero.getBoundingClientRect().bottom > 0);
+    heroVisible;
   mount.style.visibility = visible ? "visible" : "hidden";
   if (!visible) return;
   mount.style.transform = `translate3d(${position.x - 180}px,${position.y - 180}px,0) scale(${position.size / renderedShapeSize})`;
-  $(".object-fallback").style.transform = `rotate(${-pose.z}rad)`;
+  fallback.style.transform = `rotate(${-pose.z}rad)`;
   // Render only when the orientation changes. Translation is composited CSS.
   const poseKey = Object.values(pose)
     .map((value) => value.toFixed(4))
@@ -300,7 +306,45 @@ root.classList.add("object-active");
 document.fonts.ready.then(measure);
 new ResizeObserver(measure).observe(hero);
 
-// This optional module is the only runtime dependency. The branded CSS object
+// Hydrate the directions close to their viewport. Story startup has no map
+// dependency chain, and a fast navigation/click is replayed after hydration.
+const arrivalSection = $("#locations");
+let arrivalReady = false;
+let arrivalLoading;
+function loadArrival() {
+  if (!arrivalLoading) arrivalLoading = import('./public/arrival.js').then(({ initArrival }) => {
+    initArrival();
+    arrivalReady = true;
+    arrivalObserver.disconnect();
+  }).catch(error => {
+    arrivalLoading = null;
+    throw error;
+  });
+  return arrivalLoading;
+}
+const arrivalObserver = new IntersectionObserver(entries => {
+  if (entries.some(entry => entry.isIntersecting)) loadArrival().catch(() => {});
+}, { rootMargin: '1200px' });
+arrivalObserver.observe(arrivalSection);
+document.addEventListener('click', event => {
+  const control = event.target.closest('#locations button, [data-contact-destination]');
+  if (!control || arrivalReady) return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  loadArrival().then(() => control.click()).catch(() => {});
+}, true);
+arrivalSection.addEventListener('change', event => {
+  if (arrivalReady || event.target.id !== 'arrival-origin') return;
+  const select = event.target;
+  const value = select.value;
+  event.stopImmediatePropagation();
+  loadArrival().then(() => {
+    select.value = value;
+    select.dispatchEvent(new Event('change', { bubbles: true }));
+  }).catch(() => {});
+}, true);
+
+// The optional 3D dependency is self-hosted. The branded CSS object
 // and the full page remain usable if WebGL or this download is unavailable.
 const loadScene = async () => {
   try {
@@ -312,9 +356,15 @@ const loadScene = async () => {
     mount.dataset.rendering = "fallback";
   }
 };
-if ("requestIdleCallback" in window)
-  requestIdleCallback(loadScene, { timeout: 900 });
-else setTimeout(loadScene, 100);
+const sceneObserver = new IntersectionObserver(entries => {
+  if (!entries.some(entry => entry.isIntersecting)) return;
+  sceneObserver.disconnect();
+  if ("requestIdleCallback" in window)
+    requestIdleCallback(loadScene, { timeout: 900 });
+  else setTimeout(loadScene, 100);
+}, { rootMargin: '300px' });
+sceneObserver.observe(hero);
+sceneObserver.observe(stage);
 
 // Each institution retains its real contact destination. Native details also
 // work with JavaScript disabled and are fully keyboard operable.

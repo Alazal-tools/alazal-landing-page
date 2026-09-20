@@ -70,6 +70,16 @@ assert(
   "Runtime animation dependencies must be self-hosted",
 );
 const model = await readFile("public/brand-scene.js");
+assert(gzipSync(await readFile('public/arrival.js')).length < 12 * 1024, 'Directions bundle exceeds the 12 KB gzip budget');
+// The static district must not return to thousands of live SVG DOM nodes.
+const mapBase = await readFile('public/district-base.svg', 'utf8');
+assert(Buffer.byteLength(html) < 64 * 1024, 'Initial HTML exceeds the 64 KB budget');
+assert([...html.matchAll(/<[a-z][\w:-]*(?:\s|>)/g)].length < 800, 'Initial DOM exceeds the 800-element budget');
+assert(mapBase.includes('district-water') && mapBase.includes('street-borders') && mapBase.includes('mapped-building'), 'The deferred SVG must retain the full geographic model');
+assert(html.includes('class="district-base"') && html.includes('loading="lazy"'), 'Keep the fixed-size deferred map background');
+const bootstrapPosition = html.indexOf('"motion-story"');
+assert(bootstrapPosition >= 0 && bootstrapPosition < html.indexOf('href="styles.css"'), 'Choose the story layout before CSS and first paint');
+assert(css.includes('var(--story-height, 455svh)'), 'Reserve the story height before the animation module loads');
 assert(!/<iframe\b/i.test(html), 'The location guide must not embed a map');
 assert(!/class="arrival-steps"|id="arrival-next"/.test(html), 'Use the visual guide, without instruction paragraphs');
 assert(district.roads.length > 500 && district.blocks.length > 200 && district.water.length, 'Keep the actual district geography');
