@@ -1,0 +1,299 @@
+/* The district is an illustration with direct visual destinations, not a map embed. */
+.arrival { background: #0d0043; }
+.arrival-heading, .contact-directory-heading { display:flex; justify-content:space-between; align-items:end; gap:40px; margin-bottom:40px; }
+.arrival-heading h2, .contact-directory-heading h2 { font-size:clamp(48px,5.6vw,84px); letter-spacing:-2px; line-height:1.12; margin-top:14px; }
+.arrival-contact-shortcut { display:grid; place-items:center; width:64px; height:64px; border:1px solid var(--line); border-radius:50%; color:var(--teal); font-size:34px; }
+.destination-picker { display:grid; grid-template-columns:repeat(3,1fr); border-block:1px solid var(--line); }
+.destination-picker button { padding:22px 24px; display:flex; align-items:center; gap:22px; font-size:22px; font-weight:500; text-align:right; border-inline-end:1px solid var(--line); transition:background .2s,color .2s; }
+.destination-picker button:last-child { border:0; }
+.destination-picker button > span:first-child { font-size:12px; font-weight:400; opacity:.6; }
+.destination-picker button > span:last-child { margin-inline-start:auto; }
+.destination-picker button[aria-pressed=true] { color:var(--navy); background:var(--teal); }
+.destination-picker button:focus-visible { outline-offset:-5px; }
+.arrival-layout { border-bottom:1px solid var(--line); }
+.district-view { background:#160751; overflow:clip; position:relative; }
+.district-topline { position:absolute; inset:20px 28px auto; display:flex; align-items:center; justify-content:space-between; color:var(--muted); font-size:13px; z-index:4; pointer-events:none; }
+.district-key { display:flex; align-items:center; gap:8px; }
+.district-key i { display:block; width:11px; height:11px; background:var(--teal); border-radius:5px 0; }
+#replay-arrival { font-size:27px; width:44px; height:44px; border:1px solid var(--line); border-radius:50%; pointer-events:auto; color:var(--teal); }
+.district-model { position:relative; width:100%; max-width:1150px; margin-inline:auto; }
+.district-svg { display:block; width:100%; height:auto; overflow:visible; }
+.block-shadow { fill:#03001c; opacity:.3; }
+.block-front { fill:#31216c; }
+.block-right { fill:#24135d; }
+.block-roof { fill:#58418a; stroke:#6c579a; stroke-width:.5; }
+.block-floors { stroke:#9888af; stroke-width:1; opacity:.6; }
+.alazal-building .block-front { fill:#048f6c; }
+.alazal-building .block-right { fill:#00624f; }
+.alazal-building .block-roof { fill:var(--teal); stroke:#8cffd9; }
+.alazal-building .block-floors { stroke:var(--teal); }
+[data-map-building] { opacity:.4; transition:opacity .25s; }
+[data-active-destination=institute] [data-map-building=institute], [data-active-destination=boys] [data-map-building=boys], [data-active-destination=girls] [data-map-building=girls] { opacity:1; }
+.map-leader { fill:none; stroke:#b3a5cd; opacity:.45; stroke-width:1; stroke-dasharray:2 3; pointer-events:none; }
+.map-label, .facility-label { position:absolute; left:var(--x); top:var(--y); transform:translate(-50%,-50%); white-space:nowrap; line-height:1.35; text-align:center; }
+.map-label { color:#e7dff4; background:#160751ed; border:1px solid #7c699c; font-size:clamp(12px,1.2vw,18px); padding:10px 14px 12px; min-height:44px; z-index:2; transition:color .2s,border-color .2s; }
+.map-label small, .facility-label small { display:block; font-size:12px; color:#b9afd0; margin-top:4px; }
+.map-label:hover, .map-label[aria-current] { border-color:var(--teal); color:var(--teal); }
+.map-label[aria-current]:before { content:''; position:absolute; right:-4px; top:-4px; width:8px; height:8px; background:var(--teal); border-radius:4px 0; }
+.facility-label { color:var(--teal); font-size:18px; font-weight:500; opacity:.5; transition:opacity .25s; pointer-events:auto; }
+[data-active-destination=institute] [data-facility-label=institute], [data-active-destination=boys] [data-facility-label=boys] { opacity:1; }
+.north-arrow text { fill:#c9bfdc; font-size:18px; direction:rtl; }
+#district-route { fill:none; stroke:var(--teal); stroke-width:3; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:5 6; }
+#route-origin { fill:var(--navy); stroke:var(--teal); stroke-width:2; }
+#route-traveller > path { fill:var(--teal); stroke:#b5ffe7; stroke-width:1.5; }
+.traveller-halo { fill:var(--teal); opacity:.15; }
+.arrival-inset { position:absolute; left:3%; top:23%; width:23%; max-width:260px; text-align:center; }
+.inset-institute { display:flex; align-items:center; justify-content:center; gap:12px; padding:0 14px 8px; }
+.elevator-arrow { color:var(--teal); font-size:84px; font-weight:400; line-height:1; }
+.arrival-floors { width:160px; box-shadow:9px -5px 0 #372267; border:1px solid #5a4786; transform:skewY(5deg); }
+.arrival-floors > span { display:flex; justify-content:space-between; align-items:center; gap:9px; padding:7px 12px; min-height:36px; border-bottom:1px solid #5a4786; font-size:12px; background:#20105a; }
+.arrival-floors strong { font-weight:500; }
+.arrival-floors b { font-weight:400; }
+.arrival-floors .selected-floor { background:var(--teal); color:var(--navy); border:0; min-height:46px; }
+.arrival-floors .floor-door { justify-content:center; padding-bottom:0; }
+.floor-door > i { width:22px; height:27px; border:1px solid #9988b3; border-bottom:0; background:#0d0043; }
+.floor-windows { width:65%; height:15px; border-block:2px solid #796598; background:repeating-linear-gradient(90deg,#20105a 0 14px,#796598 14px 16px); }
+.inset-caption { display:block; color:var(--teal); font-size:14px; margin-top:16px; }
+.arrival-facades { display:flex; justify-content:center; gap:8px; align-items:end; padding-top:5px; }
+.arrival-facades > div { width:46%; min-height:139px; position:relative; display:flex; align-items:center; flex-direction:column; padding:16px 4px 39px; gap:9px; box-shadow:5px -4px 0 #463075; }
+.facade-school, .girls-facade { color:var(--navy); background:var(--teal); }
+.facade-clinic { background:#392369; color:#ddd3ea; }
+.arrival-facades span { font-size:13px; }
+.facade-clinic b { font-size:24px; line-height:1.1; }
+.arrival-facades i, .girls-facade > i { position:absolute; width:23px; height:32px; background:#120744; bottom:0; left:calc(50% - 12px); border:1px solid #9080ad; }
+.entrance-arrow { width:100%; height:auto; overflow:visible; }
+.entrance-arrow path { fill:none; stroke:var(--teal); stroke-width:2; }
+.entrance-arrow circle { fill:var(--teal); }
+.girls-facade { display:flex; flex-direction:column; align-items:center; gap:8px; padding:15px 10px 45px; position:relative; width:66%; margin-inline:auto; box-shadow:7px -5px 0 #049e76; font-size:16px; }
+.branch-lane { display:flex; flex-direction:column; align-items:center; color:var(--teal); padding-top:12px; }
+.branch-lane span { font-size:14px; }
+.branch-lane b { font-size:36px; font-weight:400; line-height:1; }
+.map-contact-bar { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:24px 30px; border-top:1px solid var(--line); background:#100051; }
+.map-contact-bar h3 { font-size:23px; font-weight:500; }
+.map-contact-bar > div { display:flex; align-items:center; gap:32px; }
+#destination-phone { font-size:26px; line-height:1.4; font-weight:500; }
+#destination-whatsapp, #destination-location { font-size:14px; color:var(--teal); }
+.district-caption { display:flex; justify-content:space-between; align-items:center; gap:24px; padding:12px 30px; color:#b7adce; font-size:11px; }
+.district-caption abbr { text-decoration:none; cursor:help; }
+.district-caption a { white-space:nowrap; text-decoration:underline; text-underline-offset:4px; font-size:10px; }
+.arrival-noscript { padding-block:24px; }
+.arrival-noscript > div { margin-top:24px; }
+.contact-directory-heading > p { padding-bottom:8px; font-size:20px; }
+.contact-directory { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:64px; align-items:start; }
+.contact-entry { border-top:1px solid #10005155; }
+.contact-entry > summary { display:flex; align-items:center; gap:20px; padding:26px 0; list-style:none; cursor:pointer; }
+.contact-entry > summary::-webkit-details-marker { display:none; }
+.contact-index { font-size:12px; opacity:.65; }
+.contact-entry h3 { font-size:25px; font-weight:500; }
+.contact-expand { margin-inline-start:auto; font-size:28px; font-weight:400; line-height:1; }
+.contact-entry[open] .contact-expand { transform:rotate(45deg); }
+.contact-entry-body { padding:0 0 30px; }
+.contact-entry-body > p { font-size:15px; max-width:440px; }
+.contact-primary { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:18px; margin-block:20px 18px; }
+.contact-primary > a:first-child { font-size:31px; font-weight:500; line-height:1.3; }
+.contact-wa { padding:6px 16px 9px; border:1px solid #10005188; font-size:15px; border-radius:20px 0; }
+.contact-wa:hover { color:var(--teal); background:var(--navy); }
+.contact-socials { display:flex; flex-wrap:wrap; column-gap:24px; row-gap:4px; }
+.contact-socials > a { font-size:14px; padding-block:8px; }
+.contact-socials > a:hover { text-decoration:underline; text-underline-offset:5px; }
+.contact-socials span { font-size:12px; }
+.contact-directions { display:block; width:fit-content; font-size:14px; margin-top:14px; border-bottom:1px solid #10005177; padding-block:4px; }
+@media (max-width:1100px) {
+  .map-label { font-size:14px; padding:8px 10px; }
+  .facility-label { font-size:14px; }
+  .facility-label small { font-size:10px; }
+  .arrival-floors > span { padding:5px 9px; }
+  .arrival-facades > div { min-height:120px; padding-top:12px; }
+  .arrival-facades span { font-size:11px; }
+  .contact-directory { gap:0 40px; }
+  .contact-entry h3 { font-size:21px; }
+}
+@media (max-width:850px) {
+  .arrival-inset { left:2%; top:22%; width:24%; }
+  .arrival-floors > span { padding:4px 6px; min-height:25px; gap:4px; font-size:10px; }
+  .arrival-floors .selected-floor { min-height:33px; }
+  .arrival-floors img { width:18px; }
+  .elevator-arrow { font-size:52px; }
+  .inset-institute { padding-inline:5px; gap:5px; }
+  .inset-caption { font-size:12px; margin-top:12px; }
+  .map-contact-bar { align-items:start; flex-direction:column; padding:20px 24px; }
+  .map-contact-bar > div { width:100%; justify-content:space-between; gap:16px; }
+  .map-contact-bar h3 { font-size:22px; }
+  .arrival-facades > div { min-height:104px; padding:10px 3px 30px; gap:5px; }
+  .arrival-facades img { width:20px; }
+  .facade-clinic b { font-size:22px; }
+  .arrival-facades i { height:24px; width:18px; left:calc(50% - 9px); }
+  .arrival-facades span { font-size:9px; }
+  .girls-facade { font-size:12px; padding:12px 6px 35px; }
+  .branch-lane span { font-size:11px; }
+  .branch-lane b { font-size:28px; }
+  .contact-directory { grid-template-columns:1fr; }
+  .contact-entry h3 { font-size:25px; }
+}
+@media (max-width:560px) {
+  .arrival { padding-block:68px; }
+  .arrival-heading { align-items:center; gap:20px; margin-bottom:30px; }
+  .arrival-heading h2 { font-size:40px; letter-spacing:-1px; }
+  .arrival-contact-shortcut { width:44px; height:44px; flex:0 0 44px; font-size:26px; }
+  .contact-directory-heading { display:block; margin-bottom:30px; }
+  .contact-directory-heading h2 { letter-spacing:-1px; font-size:54px; }
+  .contact-directory-heading > p { margin-top:22px; font-size:17px; }
+  .destination-picker { margin-inline:calc(-1 * var(--gutter)); }
+  .destination-picker button { justify-content:center; gap:8px; font-size:16px; padding:20px 8px; }
+  .destination-picker button > span:first-child { font-size:10px; }
+  .destination-picker button > span:last-child { display:none; }
+  .arrival-layout { margin-inline:calc(-1 * var(--gutter)); }
+  .district-topline { position:relative; inset:auto; padding:14px var(--gutter) 0; font-size:11px; }
+  #replay-arrival { font-size:23px; width:40px; height:40px; }
+  .district-model { margin-block:18px 24px; }
+  .map-label { font-size:11px; padding:6px; min-height:40px; }
+  .map-label small { font-size:9px; margin-top:2px; }
+  .facility-label { font-size:11px; }
+  .facility-label small { font-size:8px; margin-top:2px; }
+
+
+
+
+
+
+  .arrival-inset { left:3%; top:28%; width:25%; }
+  .arrival-floors { box-shadow:4px -3px 0 #372267; }
+  .arrival-floors > span { padding:2px 4px; min-height:20px; font-size:8px; }
+  .arrival-floors img { display:none; }
+  .arrival-floors .selected-floor { min-height:24px; }
+  .elevator-arrow { font-size:38px; }
+  .floor-door > i { width:13px; height:18px; }
+  .floor-windows { height:10px; }
+  .inset-caption { font-size:10px; margin-top:9px; }
+  .arrival-facades { gap:5px; }
+  .arrival-facades > div { min-height:77px; padding:7px 1px 22px; gap:4px; box-shadow:3px -3px 0 #463075; }
+  .arrival-facades img { width:16px; }
+  .facade-clinic b { font-size:18px; }
+  .arrival-facades span { font-size:8px; white-space:nowrap; }
+  .arrival-facades i { height:20px; width:13px; left:calc(50% - 6.5px); }
+  .girls-facade { font-size:10px; width:76%; padding:7px 4px 27px; box-shadow:4px -3px 0 #049e76; }
+  .girls-facade img { width:23px; }
+  .girls-facade > i { width:15px; height:23px; left:calc(50% - 7.5px); }
+  .branch-lane { padding-top:8px; }
+  .branch-lane span { font-size:9px; white-space:nowrap; }
+  .branch-lane b { font-size:24px; }
+  .map-contact-bar { gap:12px; }
+  .map-contact-bar h3 { font-size:21px; }
+  #destination-phone { font-size:23px; }
+  #destination-whatsapp, #destination-location { font-size:12px; }
+  .district-caption { padding:12px var(--gutter); gap:16px; font-size:10px; }
+  .district-caption a { font-size:9px; }
+  .contact-entry > summary { gap:14px; padding-block:25px; }
+  .contact-entry h3 { font-size:22px; }
+  .contact-primary > a:first-child { font-size:28px; }
+  .contact-wa { font-size:13px; }
+  .contact-socials { column-gap:20px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  [data-map-building], .facility-label, .map-label, .destination-picker button { transition:none; }
+}
+
+/* Geographically faithful streets and blocks, rendered in the original 3D style. */
+.district-plinth { fill:#0a002c; stroke:#382565; stroke-width:1; }
+.district-water { fill:#05484b; stroke:#1b736a; stroke-width:1.5; }
+.district-park { fill:#086650; stroke:#228f73; stroke-width:1; }
+.street-block .block-sides { fill:#160943; }
+.street-block .block-roof { fill:#38276a; stroke:#524080; stroke-width:.6; }
+.mapped-building .block-sides { fill:#29165d; }
+.mapped-building .block-roof { fill:#62508e; stroke:#8b76aa; stroke-width:.6; }
+.street-borders path, .street-surfaces path, .street-centres path { fill:none; stroke-linecap:round; stroke-linejoin:round; }
+.street-borders path { stroke:#160a44; }
+.major-street { stroke:#72638e; }
+.minor-street { stroke:#4c3b77; }
+.footway { stroke:#8274a1; stroke-dasharray:2 3; }
+.street-centres path { stroke:#ada0c7; stroke-width:.75; stroke-dasharray:3 6; opacity:.5; }
+.river-name { fill:#7cbbb0; font-size:32px; letter-spacing:4px; text-anchor:middle; }
+.street-name, .hospital-label { fill:#ded4ee; text-anchor:middle; direction:rtl; font-size:20px; paint-order:stroke; stroke:#20104f; stroke-width:6px; stroke-linejoin:round; }
+.minor-name { font-size:16px; fill:#b4a5ca; }
+.branch-name { font-size:17px; }
+.hospital-label { font-size:17px; }
+.hospital-marker circle { fill:#c8b8dd; }
+.hospital-marker path { fill:none; stroke:#160751; stroke-width:2; }
+.landmark-dot { fill:#c8b8dd; }
+#district-route-shadow { fill:none; stroke:#0c0038; stroke-width:9; stroke-linejoin:round; stroke-linecap:round; }
+#district-route { stroke-width:4; stroke-dasharray:none; }
+#route-connectors path { stroke:var(--teal); stroke-width:2; stroke-dasharray:2 3; fill:none; opacity:.8; }
+.pin-shadow { fill:#000; opacity:.4; }
+.pin-side { fill:#049c76; stroke:#07c58f; stroke-width:1; }
+.pin-top { fill:var(--teal); stroke:#a9ffe2; stroke-width:1; }
+.facility-pin { opacity:.8; }
+.facility-label { opacity:.8; background:#140643e8; padding:7px 10px; color:var(--teal); font-weight:500; font-size:17px; pointer-events:auto; border:1px solid #06ffac38; }
+.facility-label[aria-pressed=true] { color:var(--navy); background:var(--teal); border-color:var(--teal); opacity:1; }
+.facility-label[aria-pressed=true] small { color:var(--navy); }
+.map-label { padding:7px 10px; font-size:15px; background:#160751d9; border-color:#7f6f9a77; }
+.map-label[aria-current] { border-color:var(--teal); }
+.north-arrow path { fill:none; stroke:#b6a6d0; stroke-width:2; }
+.north-arrow text { text-anchor:middle; font-size:16px; }
+.district-caption > span { display:flex; align-items:center; gap:8px; }
+.arrival-inset { top:31%; left:2%; width:21%; }
+.district-topline { inset:18px 26px auto; }
+@media (max-width:850px) {
+ .map-label { font-size:12px; padding:6px 8px; }
+ .facility-label { font-size:13px; padding:5px 8px; }
+ .arrival-inset { width:22%; }
+}
+@media (max-width:560px) {
+ .district-topline { position:relative; inset:auto; }
+ .district-model { margin-block:14px 18px; }
+ .map-label { font-size:10px; padding:5px 6px; min-height:35px; }
+ .facility-label { font-size:11px; padding:5px 7px; }
+ .facility-label small { font-size:8px; }
+ .arrival-inset { width:24%; left:1%; top:33%; }
+ .street-name { font-size:27px; stroke-width:9px; }
+ .minor-name { font-size:22px; }
+ .branch-name, .hospital-label { font-size:24px; }
+}
+.district-viewport { overflow:hidden; position:relative; isolation:isolate; }
+.district-model { transform-origin:center; }
+.district-viewport.is-zoomed { touch-action:none; cursor:grab; }
+.district-viewport.is-dragging { cursor:grabbing; user-select:none; }
+.map-tools { display:flex; gap:8px; pointer-events:auto; direction:ltr; }
+.map-tools button { display:grid; place-items:center; width:40px; height:40px; color:var(--teal); background:#160751ed; border:1px solid #7c699c66; border-radius:50%; font-size:23px; line-height:1; padding:0; }
+.map-tools button:disabled { opacity:.3; cursor:default; }
+.map-tools #replay-arrival { width:40px; height:40px; font-size:25px; }
+@media (max-width:560px) { .district-model { margin-block:0; } .district-viewport { margin-block:12px 18px; } }
+.arrival-origin-control { display:flex; align-items:center; gap:22px; padding:20px 28px; border-bottom:1px solid var(--line); background:#120445; }
+.arrival-origin-control label { color:var(--muted); font-size:15px; white-space:nowrap; }
+.arrival-origin-control select { appearance:auto; background:#24135f; border:1px solid #7c699c80; padding:8px 14px 11px; min-width:260px; font-size:16px; border-radius:3px; cursor:pointer; color:#e5ddf3; }
+.arrival-origin-control select option { background:#20105a; color:white; }
+.route-mode { color:var(--teal); font-size:32px; margin-inline-start:auto; }
+.district-topline { top:108px; }
+.map-contact-bar .map-address { display:block; width:auto; flex:1; }
+.map-address p { color:#bdb2d2; font-size:14px; line-height:1.7; margin-top:8px; max-width:550px; }
+.map-contact-links { flex-wrap:wrap; }
+#mobile-arrival-detail { display:none; }
+@media (max-width:850px) {
+ .map-contact-bar .map-contact-links { width:100%; }
+ .map-contact-bar .map-address { width:100%; }
+}
+@media (max-width:560px) {
+ .arrival-origin-control { display:grid; grid-template-columns:1fr; padding:18px 24px; gap:8px; }
+ .arrival-origin-control label { font-size:13px; }
+ .arrival-origin-control select { width:100%; min-width:0; padding:10px 12px 12px; font-size:15px; }
+ .route-mode { display:none; }
+ .district-topline { top:auto; padding-top:16px; }
+ .district-viewport { margin-top:4px; }
+ .map-address p { font-size:13px; }
+ .map-label { font-size:11px; }
+ [data-landmark=square] { white-space:normal; max-width:130px; line-height:1.4; }
+ .map-contact-bar { padding-block:23px; }
+}
+.mobile-map-leader { display:none; fill:none; stroke:#d3c6e7; stroke-width:1.5; stroke-dasharray:3 4; opacity:.65; }
+@media (max-width:560px) {
+ .map-leader { display:none; }
+ .mobile-map-leader { display:block; }
+ [data-landmark=zahra] { left:19%; top:14%; }
+ [data-landmark=square] { left:65%; top:83%; }
+ [data-landmark=park] { left:84%; top:25%; }
+ [data-landmark=akad] { left:64%; top:51%; }
+ [data-map-destination=institute] { left:16%; top:37%; }
+ [data-map-destination=girls] { left:18%; top:67%; }
+ [data-map-destination=boys] { left:61%; top:10.5%; }
+ .map-label, .facility-label { max-width:125px; }
+}
+#route-directions path { fill:none; stroke:#d0fff0; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }

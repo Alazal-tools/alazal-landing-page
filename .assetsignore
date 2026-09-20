@@ -1,0 +1,18 @@
+# Local development, source preparation and documentation are not site assets.
+.git/**
+.github/**
+.info/**
+.skills/**
+.preview/**
+node_modules/**
+test-results/**
+playwright-report/**
+scripts/**
+src/brand-scene.js
+data/district.json
+*.md
+package.json
+package-lock.json
+wrangler.jsonc
+**/*.lnk
+**/*.ttf

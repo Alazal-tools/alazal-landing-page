@@ -1,0 +1,3 @@
+# Bundled Three.js includes verbatim GLSL strings with upstream whitespace.
+public/brand-scene.js linguist-generated=true -whitespace
+data/routes.js linguist-generated=true
