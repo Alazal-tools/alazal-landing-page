@@ -404,6 +404,9 @@ select:focus-visible {
 .is-ready .object-fallback {
   visibility: hidden;
 }
+.webgl-story.motion-story .narrative-stage {
+  visibility: hidden;
+}
 /* Five physical compositions share one continuous timeline. */
 .story {
   position: relative;

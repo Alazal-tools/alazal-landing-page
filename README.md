@@ -22,9 +22,9 @@ The site remains plain HTML, CSS, and JavaScript. `public/brand-scene.js` is the
 
 ## Design and motion
 
-The story's central idea is **one point becoming Alazal**. The original logo dot stays precisely aligned in the hero, then moves once to a fixed construction stage. The actual extruded geometry opens as a book cover, expands into a recessed classroom frame, splits into two hinged school entrances, and scatters into branded particles. Those particles assemble into the 9:16 platform screen around the supplied actual interface. Each object gathers back into the same point before the next scene; the final point settles in the complete logo and remains there.
+The original logo dot keeps its silhouette and proportions, with rigid rotations and uniform scaling only. It leaves the hero logo and scatters into lit 3D fragments. These build an opening book with turning pages, a tiered lecture hall, two symbolic school wings, and a volumetric phone carrying the actual platform interface on a 9:16 screen. A perspective camera and physical materials expose the objects' depth. School models are illustrations, not surveyed representations of their buildings.
 
-Scroll controls construction, a readable hold, and reassembly. There is no wandering point, pointer tilt or toy-like click motion. Dates provide direct navigation to completed scenes. The experience uses native scroll and renders WebGL only when the object changes; pixel density is capped at 1.5. Reduced-motion preferences expose the complete story in ordinary document flow, with photos and copy. The original CSS brand shape remains if WebGL fails.
+Native scroll controls assembly and disassembly. Adjacent scenes share the same fragment cloud, camera and orientation at their boundary; the point no longer resets between institutions. Frame-rate-independent damping smooths scroll input in both directions. The cloud finally gathers into the original point, which lands in the final logo and stays there. Date buttons navigate to completed scenes; keyboard navigation is immediate. Visible scenes have restrained page/camera motion capped at 30 fps; rendering loops stop offscreen, in hidden tabs, at the final logo and for reduced motion. Pixel density is capped at 1.5 and fragments use one instanced draw call. Reduced motion exposes all five scenes in document flow, with photos and copy. Static images and the CSS brand point also remain when WebGL is unavailable.
 
 DIN Next LT Arabic, navy #100051, teal #06ffac and the original logo silhouette remain fixed. Real images support five concise factual stops. Schools emphasize “Beyond Education / أبعد من التعليم”. There is no teacher directory, manifesto, everyday gallery, FAQ or large contact footer.
 
@@ -34,7 +34,7 @@ The original user references are documented in `DESIGN-NOTES.md`; no third-party
 
 ## Validation
 
-`npm test` verifies assets, anchors, requested removals, the five registration destinations, geographic route integrity, build budgets, Pixel behavior and the construction/scattering timeline. Motion tests ensure each scene returns to the same seed, scattering precedes screen assembly, and the final logo stays assembled. Browser checks cover desktop, narrow phones, landscape, all five scenes, screen proportions, registration choices and the location guide.
+`npm test` verifies assets, anchors, requested removals, the five registration destinations, geographic route integrity, build budgets, Pixel behavior and the construction/scattering timeline. Motion tests verify continuous fragment/camera states at all scene boundaries in both scroll directions, bounded animation values, and the initial/final solid point. Browser checks cover desktop, narrow phones, landscape, all five scenes, screen proportions, registration choices and the location guide.
 
 ## Interactive arrival guide
 
@@ -59,3 +59,5 @@ Local validation on 2026-09-20 compared commit `46359ac` with the September 20 p
 Earlier September 22 redesign validation: delayed startup (`?moduleDelay=600#story`) measured CLS 0 on 390×844 and 1280×720. These are local lab checks, not field performance claims. The 9:16 platform screen, date navigation, final logo alignment, phone overflow, institution chooser and bridge-to-boys-school route were checked in the browser. All 12 automated checks pass.
 
 The subsequent construction narrative was checked at 1280x800, 390x844, 320x568 and 844x390. A local reduced-motion fixture showed all five scenes in document flow. Delayed-startup checks measured CLS 0 at 320x568 and 1280x720; the stage dimensions are reserved in CSS with container units before JavaScript loads. These are lab results, not field measurements.
+
+The perspective 3D revision and continuous cloud transitions were checked at 1280x720, 390x844, 320x568 and 844x390. The final point aligned with its logo anchor within 0.001 px and remained aligned after further scrolling. Reduced motion retained all five static scenes without horizontal overflow. With a 600 ms main-module delay, local CLS was 0 on phone and desktop (LCP 192 ms and 188 ms respectively). The 3D bundle is 146 KB gzip; all 12 automated checks pass. These are local observations, not real-device or field benchmarks.

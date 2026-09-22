@@ -4,19 +4,19 @@ Updated September 22, 2026. Keep the original DIN Next LT Arabic, navy #100051, 
 
 ## The central idea
 
-The dot is the material from which the story is built. It moves once from the hero logo to a fixed stage; it does not travel around photographs. Every scene changes what the dot physically is.
+The original dot supplies the fragments that build a continuous 3D story. Its proportions never change: its mesh uses uniform scaling and rigid rotations. Scene objects are separate geometry assembled from its scattering cloud, viewed in perspective with visible depth and physical lighting.
 
-- **2010 — a page opens:** the extruded brand shape stretches into a book cover and opens on its spine to reveal the real library.
-- **2012 — a page becomes a room:** the same material expands into a 3D room frame, including a recessed back wall, revealing the actual classroom.
-- **2020 / 2024 — ambition expands:** one shape becomes two doors. They open on their outside hinges onto the two school entrances. The copy carries “Beyond Education / أبعد من التعليم”.
-- **2026 — the effect spreads:** the solid breaks into a large cloud of branded particles. The cloud assembles into a 9:16 screen around the actual Alazal platform screenshot.
+- **2010 — library and publishing:** a physical hardback opens around a spine, with turning leaves and the supplied library photo on a page.
+- **2012 — institute:** desks assemble row by row inside a tiered lecture hall.
+- **2020 / 2024 — schools:** two symbolic school wings assemble around a shared courtyard and brand point. Copy names the schools directly and carries “Beyond Education / أبعد من التعليم”. The existing location guide remains the geographic reference.
+- **2026 — platform:** fragments assemble into a volumetric device. Its actual 9:16 screen carries the supplied platform interface as a texture.
 - **Today — the same identity:** the dot gathers and settles into the exact final logo position, then scrolls away with that logo.
 
-Each transformation has a construction phase, a quiet hold and a return to the original seed. This makes the continuity legible in either scroll direction. Headline copy stays beside the transformation; text never emerges from the dot.
+Each transformation has construction, a readable hold, and disassembly into a shared cloud. The outgoing and incoming cloud positions, camera and orientation match exactly; there is no solid-point reset between institutions. Scroll damping makes forward and reverse transitions continuous. Headlines name the institutions directly, beside the scene; text never emerges from the dot.
 
 ## Interaction and fallbacks
 
-Scrolling is native. The five date buttons navigate directly to completed scenes. There is no cursor chasing, arbitrary flight path, toss interaction or visible scroll instruction. Mobile uses the same transformations inside a stage sized to the available width and height. Reduced motion presents all five scenes as normal document content. The self-hosted renderer runs only when the geometry/material pose changes, with pixel density capped at 1.5.
+Scrolling is native. Date buttons navigate to completed scenes, immediately when using a keyboard. Mobile uses the same 3D models and transitions inside its available stage. Reduced motion presents all five scenes as ordinary document content. Ambient page and camera movement is capped at 30 fps and paused offscreen, in hidden tabs and at the final logo. Fragments are instanced in one draw call and pixel density is capped at 1.5. Images remain as a static fallback when WebGL cannot run.
 
 ## Page sequence
 

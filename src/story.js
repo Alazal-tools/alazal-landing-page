@@ -15,6 +15,7 @@ export function initStory() {
   const shapeRatio = 2.15 / 3.8;
   let scene, frame = 0, enabled = false, storyTop = 0, travel = 1, heroAngle = 0;
   let active = -1, lastPose = '', lastState = '', previousWidth = innerWidth, previousHeight = innerHeight;
+  let shownProgress=null,lastTick=0,snapNext=true;
   const box = element => { const r = element.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2, size:element.offsetWidth}; };
   const blend = (a,b,t) => ({x:mix(a.x,b.x,t), y:mix(a.y,b.y,t), size:mix(a.size,b.size,t)});
 
@@ -35,15 +36,21 @@ export function initStory() {
       p.style.setProperty('--build','1'); p.style.setProperty('--reveal','1');
     });
     copies.forEach(p => {p.style.opacity='';});
-    active=-1; lastState=''; measure();
+    active=-1; lastState=''; snapNext=true; measure();
   }
-  function update() {
+  function update(time) {
     frame=0;
-    if(document.hidden) return;
+    if(document.hidden) {scene?.setActive(false);return;}
     const raw=(scrollY-storyTop)/travel*panels.length;
-    const state=storyState(raw,panels.length);
+    const elapsed=lastTick?Math.min(64,time-lastTick):16;lastTick=time;
+    if(shownProgress===null||snapNext||!enabled)shownProgress=raw;
+    else shownProgress=mix(shownProgress,raw,1-Math.exp(-elapsed/85));
+    snapNext=false;
+    const settling=Math.abs(shownProgress-raw)>.0002;
+    if(!settling)shownProgress=raw;
+    const state=storyState(shownProgress,panels.length);
     const entrance=enabled?range(scrollY/storyTop,.12,1):0;
-    // A single fixed construction site. No per-scene XY paths or cursor drift.
+    // Fixed stage; all depth, page turns and scattering happen in the 3D world.
     const heroPoint=box(heroAnchor), finalPoint=box(finishAnchor);
     const rects=arts.map(a=>a.getBoundingClientRect());
     const art=rects[state.active];
@@ -52,10 +59,10 @@ export function initStory() {
     let point=heroPoint, pose={x:0,y:0,z:heroAngle,chapter:-1,build:0};
     if(enabled) {
       point=blend(heroPoint,centre,entrance);
-      pose={x:0,y:0,z:mix(heroAngle,0,entrance),chapter:state.active,build:state.build*entrance};
+      pose={x:0,y:0,z:mix(heroAngle,0,entrance),chapter:state.active,build:state.build*entrance,exit:state.gather};
       if(state.active===4) {
-        point=blend(centre,finalPoint,range(state.local,.04,.60));
-        pose={x:0,y:0,z:0,chapter:-1,build:0};
+        point=blend(centre,finalPoint,range(state.local,.38,.70));
+        pose={x:0,y:0,z:0,chapter:state.local<.38?4:-1,build:range(state.local,0,.38),exit:0};
       }
       const key=[state.active,state.local.toFixed(4),entrance.toFixed(4),span.toFixed(1)].join(',');
       if(key!==lastState) {
@@ -66,8 +73,9 @@ export function initStory() {
           panel.style.visibility=current?'visible':'hidden';
           const build=current?state.build:0;
           panel.style.setProperty('--build',String(build));
-          panel.style.setProperty('--reveal',String(sceneReveal(i,build)));
-          copies[i].style.opacity=current?String((state.active===0?1:range(state.local,0,.10))*(1-state.gather)): '0';
+          panel.style.setProperty('--reveal',String(sceneReveal(i,build,state.gather)));
+          copies[i].style.opacity=current?String((state.active===0?1:range(state.local,.015,.14))*(1-range(state.local,.85,1))): '0';
+          if(current&&state.active===4)copies[i].style.opacity=String(range(state.local,.015,.14));
         });
         bar.style.transform=`scaleX(${clamp(raw/panels.length)})`;
       }
@@ -80,6 +88,7 @@ export function initStory() {
     }
     const visible=point.y+point.size>0&&point.y-point.size<innerHeight&&(enabled||hero.getBoundingClientRect().bottom>0);
     mount.style.visibility=visible?'visible':'hidden';
+    scene?.setActive(enabled&&visible&&shownProgress>=0&&shownProgress<4.38);
     // The dot is the material of the story, not an unexplained navigation button.
     if(visible) {
       mount.style.transform=`translate3d(${point.x-180}px,${point.y-180}px,0) scale(${point.size/(shapeRatio*360)})`;
@@ -89,11 +98,13 @@ export function initStory() {
       if(scene&&poseKey!==lastPose){scene.render(pose);lastPose=poseKey;}
     }
     root.classList.add('object-active');
+    if(settling)invalidate();
   }
   function invalidate(){if(!frame&&!document.hidden)frame=requestAnimationFrame(update);}
   buttons.forEach(b=>b.addEventListener('click',event=>{
     measure();
-    scrollTo({top:storyTop+travel*(Number(b.dataset.storyTo)+.66)/panels.length,behavior:reduced.matches||event.detail===0?'instant':'smooth'});
+    const index=Number(b.dataset.storyTo);snapNext=event.detail===0;
+    scrollTo({top:storyTop+travel*(index+(index===4?.74:.66))/panels.length,behavior:reduced.matches||event.detail===0?'instant':'smooth'});
   }));
   reduced.addEventListener('change',configure);
   addEventListener('scroll',invalidate,{passive:true});
@@ -101,7 +112,7 @@ export function initStory() {
     if(innerWidth!==previousWidth||Math.abs(innerHeight-previousHeight)>100){previousWidth=innerWidth;previousHeight=innerHeight;measure();}
     else invalidate();
   });
-  document.addEventListener('visibilitychange',invalidate);
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)scene?.setActive(false);else invalidate();});
   document.fonts.ready.then(measure);
   new ResizeObserver(measure).observe(hero);
   configure();
