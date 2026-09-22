@@ -1,5 +1,5 @@
 import { metaPixelId, metaProductionHosts } from '../analytics-config.js';
-import { createMetaPixel, loadMetaLibrary } from './meta-pixel.js';
+import { createMetaPixel, loadMetaLibrary, isMetaTrackingEnabled } from './meta-pixel.js';
 
 const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 const debug = local && new URLSearchParams(location.search).get('meta_debug') === '1';
@@ -7,10 +7,9 @@ const configured = /^\d{10,20}$/.test(metaPixelId) && metaProductionHosts.includ
 const eligible = configured || debug;
 const key = 'alazal-meta-consent-v1';
 const maxAge = 180 * 24 * 60 * 60 * 1000;
-const banner = document.querySelector('#meta-consent');
+const notice = document.querySelector('#meta-privacy');
 const settings = document.querySelector('#meta-settings');
 const status = document.querySelector('#meta-consent-status');
-let previousFocus;
 let granted = false;
 const events = [];
 const pixel = createMetaPixel({ pixelId: metaPixelId, debug, load: loadMetaLibrary, onEvent(event) {
@@ -36,7 +35,7 @@ function readConsent() {
   return null;
 }
 function applyConsent(choice, persist = false) {
-  granted = eligible && choice === 'granted' && !navigator.globalPrivacyControl;
+  granted = isMetaTrackingEnabled({ eligible, preference: choice, globalPrivacyControl: navigator.globalPrivacyControl });
   pixel.setConsent(granted);
   if (persist) {
     try { localStorage.setItem(key, JSON.stringify({ choice: granted ? 'granted' : 'denied', at: Date.now() })); } catch {}
@@ -44,25 +43,18 @@ function applyConsent(choice, persist = false) {
   status.textContent = navigator.globalPrivacyControl
     ? 'متصفحك يطلب عدم مشاركة النشاط للإعلانات؛ قياس Meta غير مفعّل.'
     : granted ? 'قياس إعلانات Meta مفعّل.' : 'قياس إعلانات Meta غير مفعّل.';
-  banner.hidden = true;
-}
-function showSettings() {
-  previousFocus = document.activeElement;
-  banner.hidden = false;
-  banner.querySelector('button:not(:disabled)').focus({ preventScroll: true });
+  settings.textContent = navigator.globalPrivacyControl
+    ? 'القياس متوقف بطلب المتصفح'
+    : granted ? 'إيقاف قياس Meta' : 'تفعيل قياس Meta';
+  settings.setAttribute('aria-pressed', String(granted));
 }
 
 if (eligible) {
+  notice.hidden = false;
   settings.hidden = false;
-  banner.querySelector('[data-meta-consent="granted"]').disabled = Boolean(navigator.globalPrivacyControl);
-  const choice = readConsent();
-  if (choice || navigator.globalPrivacyControl) applyConsent(choice);
-  else banner.hidden = false;
-  settings.addEventListener('click', showSettings);
-  banner.querySelectorAll('[data-meta-consent]').forEach(button => button.addEventListener('click', () => {
-    applyConsent(button.dataset.metaConsent, true);
-    previousFocus?.focus({ preventScroll: true });
-  }));
+  settings.disabled = Boolean(navigator.globalPrivacyControl);
+  applyConsent(readConsent());
+  settings.addEventListener('click', () => applyConsent(granted ? 'denied' : 'granted', true));
   // A decision in another tab applies here too; revocation discards queued events.
   addEventListener('storage', event => { if (event.key === key || event.key === null) applyConsent(readConsent()); });
 
@@ -114,6 +106,6 @@ if (eligible) {
 }
 
 window.alazalMeta = Object.freeze({
-  status: () => ({ configured, debug, consent: granted, globalPrivacyControl: Boolean(navigator.globalPrivacyControl) }),
-  openSettings: () => { if (eligible) showSettings(); },
+  status: () => ({ configured, debug, enabled: granted, preference: readConsent() || 'default', globalPrivacyControl: Boolean(navigator.globalPrivacyControl) }),
+  openSettings: () => { if (eligible) { settings.scrollIntoView({ block: 'center' }); settings.focus({ preventScroll: true }); } },
 });

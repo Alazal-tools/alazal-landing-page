@@ -72,7 +72,7 @@ assert(
 const model = await readFile("public/brand-scene.js");
 const analytics = await readFile('public/analytics.js');
 assert(gzipSync(analytics).length < 5 * 1024, 'Local analytics integration exceeds 5 KB gzip');
-assert(!/connect\.facebook\.net|facebook\.com\/tr\?/.test(html), 'Meta must not load before advertising consent');
+assert(!/connect\.facebook\.net|facebook\.com\/tr\?/.test(html), 'Meta must load through the preference-aware module, without a duplicate snippet');
 await access('analytics-config.js');
 await access('privacy.html');
 assert(gzipSync(await readFile('public/arrival.js')).length < 12 * 1024, 'Directions bundle exceeds the 12 KB gzip budget');

@@ -704,19 +704,13 @@
         ><span>من الكاظمية، لكل طموح.</span
         ><span dir="ltr">ALAZAL — SINCE 2010</span>
         <a href="privacy.html">الخصوصية</a>
-        <button type="button" id="meta-settings" hidden>إعدادات إعلانات Meta</button>
+        <div class="meta-privacy" id="meta-privacy" hidden>
+          <span>نستخدم Meta Pixel لقياس الزيارات وعرض إعلانات الأزل.</span>
+          <a href="privacy.html">تفاصيل القياس والخصوصية</a>
+          <button type="button" id="meta-settings" hidden>إيقاف قياس Meta</button>
+          <span id="meta-consent-status" class="sr-only" aria-live="polite"></span>
+        </div>
       </div>
     </footer>
-    <section class="meta-consent" id="meta-consent" role="region" aria-labelledby="meta-consent-title" hidden>
-      <div>
-        <h2 id="meta-consent-title">قياس إعلانات Meta</h2>
-        <p>بموافقتك، نستخدم Meta Pixel لقياس الزيارات ونقرات التواصل وعرض إعلانات الأزل لك على فيسبوك وإنستغرام. اختيارك لا يؤثر على تصفّح الموقع. <a href="privacy.html">تفاصيل الخصوصية</a></p>
-        <p id="meta-consent-status" class="meta-consent-status" aria-live="polite"></p>
-      </div>
-      <div class="meta-consent-actions">
-        <button type="button" data-meta-consent="granted">أوافق</button>
-        <button type="button" data-meta-consent="denied">لا أوافق</button>
-      </div>
-    </section>
   </body>
 </html>

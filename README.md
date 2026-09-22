@@ -46,7 +46,7 @@ The illustrated entrance insets remain on desktop and are omitted on phones to k
 
 ## Meta advertising measurement
 
-Meta Pixel `28576937971945403` is configured in `analytics-config.js`. See [META-PIXEL-SETUP.md](META-PIXEL-SETUP.md) for Test Events, event meanings and retargeting audiences. The independent small module loads Meta only after advertising consent on approved production domains; it does not block story initialization. It includes a local dry run and a visitor-facing privacy notice. Existing Google Analytics and Clarity remain separate.
+Meta Pixel `28576937971945403` is configured in `analytics-config.js`. See [META-PIXEL-SETUP.md](META-PIXEL-SETUP.md) for Test Events, event meanings and retargeting audiences. The independent small module loads Meta automatically on approved production domains while respecting saved visitor opt-outs and Global Privacy Control. A footer notice and tracking toggle replace the pop-up. It does not block story initialization and includes a local dry run. Existing Google Analytics and Clarity remain separate.
 
 ## Performance
 

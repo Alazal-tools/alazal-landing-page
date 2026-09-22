@@ -1,6 +1,55 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createMetaPixel, loadMetaLibrary } from '../src/meta-pixel.js';
+import { createMetaPixel, loadMetaLibrary, isMetaTrackingEnabled } from '../src/meta-pixel.js';
+
+test('automatic tracking preserves prior opt-outs, privacy signals and production limits', () => {
+  assert.equal(isMetaTrackingEnabled({ eligible: true, preference: null }), true);
+  assert.equal(isMetaTrackingEnabled({ eligible: true, preference: 'denied' }), false);
+  assert.equal(isMetaTrackingEnabled({ eligible: true, preference: 'granted', globalPrivacyControl: true }), false);
+  assert.equal(isMetaTrackingEnabled({ eligible: false, preference: null }), false);
+  assert.equal(isMetaTrackingEnabled({ eligible: true, preference: 'granted' }), true);
+});
+
+test('page integration starts automatically, exposes the footer control and preserves an opt-out on reload', async () => {
+  const names = ['document', 'window', 'location', 'navigator', 'localStorage', 'addEventListener'];
+  const original = new Map(names.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]));
+  const storage = new Map(), calls = [];
+  const element = () => Object.assign(new EventTarget(), { hidden: true, setAttribute() {}, scrollIntoView() {}, focus() {} });
+  const notice = element(), settings = element(), status = element();
+  const doc = Object.assign(new EventTarget(), {
+    querySelector: selector => ({ '#meta-privacy': notice, '#meta-settings': settings, '#meta-consent-status': status }[selector]),
+  });
+  const fbq = (...args) => calls.push(args);
+  fbq.callMethod = () => {};
+  const win = { fbq };
+  const globals = {
+    document: doc, window: win, location: new URL('https://alazalgroup.com'), navigator: { globalPrivacyControl: false },
+    localStorage: { getItem: key => storage.get(key) || null, setItem: (key, value) => storage.set(key, value) },
+    addEventListener() {},
+  };
+  try {
+    for (const [name, value] of Object.entries(globals)) Object.defineProperty(globalThis, name, { configurable: true, writable: true, value });
+    await import('../src/analytics.js?integration=automatic');
+    assert.equal(calls.filter(call => call[2] === 'PageView').length, 1);
+    assert.equal(notice.hidden, false);
+    assert.equal(win.alazalMeta.status().enabled, true);
+    assert.equal(win.alazalMeta.status().preference, 'default');
+    assert.equal(storage.size, 0, 'Default startup must not record an invented visitor choice');
+    settings.dispatchEvent(new Event('click'));
+    assert.equal(win.alazalMeta.status().enabled, false);
+    assert.equal(win.alazalMeta.status().preference, 'denied');
+    assert.deepEqual(calls.at(-1), ['consent', 'revoke']);
+    calls.length = 0;
+    await import('../src/analytics.js?integration=reload');
+    assert.equal(win.alazalMeta.status().enabled, false);
+    assert.equal(calls.length, 0, 'Reload must not initialize or track after an opt-out');
+  } finally {
+    for (const name of names) {
+      if (original.get(name)) Object.defineProperty(globalThis, name, original.get(name));
+      else delete globalThis[name];
+    }
+  }
+});
 
 function fixture(pixelId = '123456789012345') {
   let finish;

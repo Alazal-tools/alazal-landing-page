@@ -1,4 +1,9 @@
-// The small transport is separate from the page so consent and delivery can be
+// Existing visitor opt-outs and browser privacy signals override the default.
+export function isMetaTrackingEnabled({ eligible, preference, globalPrivacyControl }) {
+  return Boolean(eligible) && preference !== 'denied' && !globalPrivacyControl;
+}
+
+// The small transport is separate from the page so preferences and delivery can be
 // tested without sending any real visitors or test traffic to Meta.
 export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => {} }) {
   let consent = false;
