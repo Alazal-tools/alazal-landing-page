@@ -20,12 +20,14 @@ test('automatic tracking preserves prior opt-outs, privacy signals and productio
   assert.equal(isMetaTrackingEnabled({ eligible: true, preference: 'granted' }), true);
 });
 
-test('page integration starts automatically, exposes the footer control and preserves an opt-out on reload', async () => {
+test('page integration starts automatically, opens measurement settings and preserves an opt-out on reload', async () => {
   const names = ['document', 'window', 'location', 'navigator', 'localStorage', 'addEventListener'];
   const original = new Map(names.map(name => [name, Object.getOwnPropertyDescriptor(globalThis, name)]));
   const storage = new Map(), calls = [];
   const element = () => Object.assign(new EventTarget(), { hidden: true, setAttribute() {}, scrollIntoView() {}, focus() {} });
   const notice = element(), settings = element(), status = element();
+  const disclosure = { open: false };
+  settings.closest = () => disclosure;
   const doc = Object.assign(new EventTarget(), {
     querySelector: selector => ({ '#meta-privacy': notice, '#meta-settings': settings, '#meta-consent-status': status }[selector]),
   });
@@ -45,6 +47,8 @@ test('page integration starts automatically, exposes the footer control and pres
     assert.equal(win.alazalMeta.status().enabled, true);
     assert.equal(win.alazalMeta.status().preference, 'default');
     assert.equal(storage.size, 0, 'Default startup must not record an invented visitor choice');
+    win.alazalMeta.openSettings();
+    assert.equal(disclosure.open, true);
     settings.dispatchEvent(new Event('click'));
     assert.equal(win.alazalMeta.status().enabled, false);
     assert.equal(win.alazalMeta.status().preference, 'denied');
@@ -69,6 +73,16 @@ function fixture(pixelId = '123456789012345') {
   const pixel = createMetaPixel({pixelId, load: () => { loads++; return ready; }, onEvent: e => events.push(e)});
   return {pixel,calls,events,finish,loads:()=>loads};
 }
+test('form opening is a custom intent event with fixed IDs, never a completed registration', async () => {
+  const f = fixture();
+  f.pixel.setConsent(true);
+  f.finish(); await Promise.resolve();
+  f.pixel.track('RegistrationFormOpen', {facility:'schools',form_id:'school-general',student_name:'private',phone:'private'});
+  assert.deepEqual(f.calls.at(-1), ['trackSingleCustom','123456789012345','RegistrationFormOpen',{facility:'schools',form_id:'school-general'}]);
+  f.pixel.track('RegistrationFormOpen', {form_id:'unrecognized-input'});
+  f.pixel.track('CompleteRegistration', {form_id:'school-general'});
+  assert.deepEqual(f.events.map(e=>e.name), ['PageView','RegistrationFormOpen']);
+});
 test('missing ID and denied consent never load Meta or retain earlier clicks', async () => {
   const disabled = fixture('');
   disabled.pixel.setConsent(true);

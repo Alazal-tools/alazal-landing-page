@@ -60,12 +60,15 @@ assert.equal(
   [...html.matchAll(/data-chapter="\d+"/g)].length,
   "Every story stop needs a navigation button",
 );
-assert(
-  !/100\+|\+100|شعب النخبة|شعبة النخبة|شعبة الأوائل|program_100plus|program_elite/.test(
-    html + script,
-  ),
-  "Retired program content is still visible",
-);
+const registration = JSON.parse(await readFile('data/registration.json','utf8'));
+for (const page of Object.values(registration.pages)) for (const form of page.forms) {
+  assert(html.includes(`href="${form.url}"`), `Missing registration link ${form.id}`);
+  assert(html.includes(`data-form-id="${form.id}"`));
+}
+assert.equal([...html.matchAll(/data-form-id=/g)].length,5,'Keep all five registration destinations');
+assert(html.indexOf('id="registration"') > html.indexOf('data-chapter="4"') && html.indexOf('id="registration"') < html.indexOf('id="locations"'),'Story leads directly into registration, then the location guide');
+assert(!/id="promise"|class="everyday"|class="questions |class="contact"|class="footer |مساحة لكل سؤال|اتبع النقطة|تجاوز الحكاية|قراءة دون حركة|حرّك الصفحة لتكمل|hero-coordinate|story-scroll-hint/.test(html),'Removed content or instructional labels have returned');
+assert(html.includes('أبعد من التعليم') && html.includes('Home-Guest.webp'),'Keep Beyond Education and the actual platform interface');
 assert(
   !/https?:\/\/[^'"\s]+(?:three|gsap)/.test(html + script),
   "Runtime animation dependencies must be self-hosted",
@@ -87,7 +90,7 @@ assert([...html.matchAll(/<[a-z][\w:-]*(?:\s|>)/g)].length < 800, 'Initial DOM e
 assert(mapBase.includes('district-water') && mapBase.includes('street-borders') && mapBase.includes('mapped-building'), 'The deferred SVG must retain the full geographic model');
 assert(html.includes('class="district-base"') && html.includes('loading="lazy"'), 'Keep the fixed-size deferred map background');
 const bootstrapPosition = html.indexOf('"motion-story"');
-assert(bootstrapPosition >= 0 && bootstrapPosition < html.indexOf('href="styles.css"'), 'Choose the story layout before CSS and first paint');
+assert(bootstrapPosition >= 0 && bootstrapPosition < html.indexOf('href="styles.css'), 'Choose the story layout before CSS and first paint');
 assert(css.includes('var(--story-height, 455svh)'), 'Reserve the story height before the animation module loads');
 assert(!/<iframe\b/i.test(html), 'The location guide must not embed a map');
 assert(!/class="arrival-steps"|id="arrival-next"/.test(html), 'Use the visual guide, without instruction paragraphs');
@@ -116,15 +119,7 @@ for (const [dest, starts] of Object.entries(district.routes)) {
   }
 }
 for (const name of ['شارع اكد','شارع المشاط','شارع النواب','فرع مستشفى الضرغام','مستشفى الضرغام','دجلة']) assert(html.includes(name), `Missing wayfinding label ${name}`);
-for (const c of contacts) {
-  assert(html.includes(`id="contact-${c.id}"`));
-  assert(html.includes(`https://wa.me/${c.international}`));
-  assert(html.includes(`tel:+${c.international}`));
-  assert(html.includes(`https://www.instagram.com/${c.instagram}/`));
-  assert(html.includes(`https://t.me/${c.telegram}`));
-  if (c.direct) assert(html.includes(`https://t.me/${c.direct}`));
-  if (c.facebook) assert(html.includes(`https://www.facebook.com/${c.facebook}`));
-}
+for (const c of contacts.filter(c=>['institute','girls','boys'].includes(c.id))) assert(html.includes(`tel:+${c.international}`),'Keep direct registration phone numbers');
 assert(
   gzipSync(model).length < 160 * 1024,
   "3D module exceeds the 160 KB gzip budget",
@@ -136,5 +131,5 @@ for (const weight of ["Regular", "Medium", "Bold"]) {
   );
 }
 console.log(
-  `Verified ${references.length} references, street-following routes, six contact directories, concise story, removed staff directory, and asset budgets.`,
+  `Verified ${references.length} references, unchanged street routes, five registration forms, concise story, requested removals, and asset budgets.`,
 );

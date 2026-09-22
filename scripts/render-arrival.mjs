@@ -77,17 +77,10 @@ const base = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1270 910"><st
 await writeFile('public/district-base.svg', base);
 const interactiveMap = map.slice(0, baseStart) + '<g clip-path="url(#district-clip)">' + map.slice(baseEnd);
 
-const socialLinks = (c) => [
-  ['إنستغرام', `https://www.instagram.com/${c.instagram}/`],
-  ['قناة تيليغرام', `https://t.me/${c.telegram}`],
-  ...(c.direct ? [['مراسلة تيليغرام', `https://t.me/${c.direct}`]] : []),
-  ...(c.facebook ? [['فيسبوك', `https://www.facebook.com/${c.facebook}`]] : []),
-].map(([name,url])=>`<a href="${url}" target="_blank" rel="noopener">${name} <span aria-hidden="true">↗</span></a>`).join('');
-
 const arrival = `<!-- arrival:start -->
       <section class="arrival section-space" id="locations" aria-labelledby="arrival-title">
         <div class="wrap">
-          <header class="arrival-heading"><div><p class="eyebrow">بغداد / الكاظمية</p><h2 id="arrival-title">طريقك إلى <em>الأزل.</em></h2></div><a class="arrival-contact-shortcut" href="#contact" aria-label="أرقام التواصل والحسابات">↗</a></header>
+          <header class="arrival-heading"><div><p class="eyebrow">بغداد / الكاظمية</p><h2 id="arrival-title">طريقك إلى <em>الأزل.</em></h2></div><a class="arrival-contact-shortcut" href="#registration" aria-label="التسجيل في الأزل">↗</a></header>
           <div class="destination-picker" role="group" aria-label="اختَر وجهتك">${Object.entries(destinations).map(([id,d],i)=>`<button type="button" data-destination="${id}" aria-pressed="${i===0}" aria-controls="arrival-map"><span dir="ltr">0${i+1}</span>${d.name}<span aria-hidden="true">↙</span></button>`).join('')}</div>
           <div class="arrival-layout" data-active-destination="institute">
             <div class="district-view" id="arrival-map">
@@ -119,16 +112,8 @@ const arrival = `<!-- arrival:start -->
       </section>
       <!-- arrival:end -->`;
 
-const directory = `<section class="contact" id="contact" aria-labelledby="contact-title">
-        <div class="wrap contact-inner">
-          <div class="contact-directory-heading"><div><p class="eyebrow">لكل سؤال، أهله.</p><h2 id="contact-title">نسمعك.<br/><span>ونوصلك.</span></h2></div><p>اختَر مكانك في الأزل.<br/>كل الأرقام والحسابات، هنا.</p></div>
-          <div class="contact-directory">${contacts.map((c,i)=>`<details class="contact-entry" id="contact-${c.id}" ${i===0?'open':''}><summary><span class="contact-index" dir="ltr">0${i+1}</span><h3>${c.name}</h3><span class="contact-expand" aria-hidden="true">+</span></summary><div class="contact-entry-body"><p>${c.address}</p><div class="contact-primary"><a href="tel:+${c.international}" dir="ltr">${c.phone}</a><a class="contact-wa" href="https://wa.me/${c.international}" target="_blank" rel="noopener">واتساب ↗</a></div><div class="contact-socials">${socialLinks(c)}</div>${destinations[c.id]?`<a class="contact-directions" href="#locations" data-contact-destination="${c.id}">دليل الوصول إلى ${destinations[c.id].name} ←</a>`:''}</div></details>`).join('')}</div>
-        </div>
-      </section>`;
-
 let html = await readFile('index.html','utf8');
 if (html.includes('<!-- arrival:start -->')) html = html.replace(/<!-- arrival:start -->[\s\S]*?<!-- arrival:end -->/, arrival);
 else html = html.replace('      <section class="everyday"', arrival + '\n      <section class="everyday"');
-html = html.replace(/<section class="contact" id="contact"[\s\S]*?<\/section>/,directory);
 await writeFile('index.html',html);
-console.log('Rendered local district model, three arrival guides, and six complete contact entries.');
+console.log('Rendered the unchanged district geometry and three arrival guides.');

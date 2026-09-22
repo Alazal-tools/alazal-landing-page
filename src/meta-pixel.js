@@ -54,13 +54,18 @@ export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => 
       }
     },
     track(name, data = {}, custom = false) {
-      if (!consent || !['ViewContent', 'Contact', 'GetDirections', 'SocialClick'].includes(name)) return;
+      if (!consent || !['ViewContent', 'Contact', 'GetDirections', 'SocialClick', 'RegistrationFormOpen'].includes(name)) return;
       // Only fixed catalogue identifiers/channel names enter the event payload.
       // Never forward form values, phone numbers, addresses or route origins.
       const allowedFacilities = ['group', 'institute', 'schools', 'girls', 'boys', 'platform', 'library', 'publisher'];
       const safe = {};
       if (allowedFacilities.includes(data.facility)) safe.facility = data.facility;
       if (['whatsapp', 'phone', 'telegram', 'instagram', 'facebook', 'map'].includes(data.channel)) safe.channel = data.channel;
+      if (name === 'RegistrationFormOpen') {
+        if (!['school-general', 'school-elite', 'institute-general', 'institute-100', 'institute-challenge'].includes(data.form_id)) return;
+        safe.form_id = data.form_id;
+        custom = true;
+      }
       const event = { name, data: safe, custom };
       if (debug || send) deliver(event);
       else if (pending.length < 30) pending.push(event);

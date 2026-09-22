@@ -75,6 +75,7 @@ if (eligible) {
     track('ViewContent', { facility });
   };
   function facilityFor(element) {
+    if (element.dataset.facility) return element.dataset.facility;
     const entry = element.closest('.contact-entry');
     if (entry) return entry.id.replace('contact-', '');
     const entity = element.closest('[data-entity]');
@@ -88,6 +89,7 @@ if (eligible) {
     if (!element) return;
     const selected = element.dataset.destination || element.dataset.mapDestination;
     if (selected) view(selected);
+    if (element.dataset.formId) track('RegistrationFormOpen', { facility: element.dataset.institution, form_id: element.dataset.formId }, true);
     if (element.tagName === 'SUMMARY') {
       const details = element.parentElement;
       if (!details.open && details.matches('.entity, .contact-entry')) view(facilityFor(element));
@@ -110,7 +112,7 @@ if (eligible) {
 window.alazalMeta = Object.freeze({
   status: () => ({ configured, debug, enabled: granted, preference: readConsent() || 'default', globalPrivacyControl: Boolean(navigator.globalPrivacyControl) }),
   diagnostics: () => ({ pixelId: metaPixelId, host: location.hostname, ...window.alazalMeta.status(), ...pixel.status(), queuedEvents: events.map(({name, data}) => ({name, ...data})) }),
-  openSettings: () => { if (eligible) { settings.scrollIntoView({ block: 'center' }); settings.focus({ preventScroll: true }); } },
+  openSettings: () => { if (eligible) { const disclosure=settings.closest('details'); if(disclosure)disclosure.open=true; settings.scrollIntoView({ block: 'center' }); settings.focus({ preventScroll: true }); } },
 });
 
 if (diagnostics) {

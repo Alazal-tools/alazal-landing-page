@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <script>
       // Reserve the final story layout before the first paint or hash navigation.
+      document.documentElement.classList.add('has-script');
+      const registrationChoice = /^#(school|institute)-registration$/.exec(location.hash);
+      if (registrationChoice) document.documentElement.dataset.registration = registrationChoice[1];
       document.documentElement.classList.add(
         matchMedia("(prefers-reduced-motion: reduce)").matches
           ? "reading-story"
@@ -55,10 +58,10 @@
       type="font/woff2"
       crossorigin
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=0e5f697a9bab" />
     <link rel="stylesheet" href="arrival.css" />
-    <script type="module" src="script.js"></script>
-    <script type="module" src="public/analytics.js?v=00de9ec8fc4f"></script>
+    <script type="module" src="script.js?v=0e5f697a9bab"></script>
+    <script type="module" src="public/analytics.js?v=5b6ecfcaefc6"></script>
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-YSSZ6LJNDC"
@@ -96,10 +99,10 @@
         /><span>مجموعة الأزل<small>التعليمية</small></span></a
       >
       <nav class="desktop-nav" aria-label="التنقل الرئيسي">
-        <a href="#story">حكاية الأزل</a><a href="#world">عالم الأزل</a><a href="#locations">كيف توصل؟</a>
+        <a href="#story">حكاية الأزل</a><a href="#registration">التسجيل</a><a href="#locations">كيف توصل؟</a>
       </nav>
-      <a class="header-contact" href="#contact"
-        >خلّنا نبدأ <span aria-hidden="true">↖</span></a
+      <a class="header-contact" href="#registration"
+        >سجّل الآن <span aria-hidden="true">↖</span></a
       >
       <button
         class="menu-toggle"
@@ -116,13 +119,11 @@
         hidden
       >
         <a href="#story">حكاية الأزل <span>01</span></a
-        ><a href="#world">عالم الأزل <span>02</span></a
-        ><a href="#locations">كيف توصل؟ <span>03</span></a><a href="#contact">خلّنا نبدأ <span>↖</span></a>
+        ><a href="#registration">التسجيل <span>02</span></a
+        ><a href="#locations">كيف توصل؟ <span>03</span></a><a href="#registration">خلّنا نبدأ <span>↖</span></a>
       </nav>
     </header>
-    <div class="brand-object" id="brand-object" aria-hidden="true">
-      <div class="object-fallback"></div>
-    </div>
+    <button class="brand-object" id="brand-object" type="button" aria-label="المحطة التالية في حكاية الأزل"><span class="object-fallback" aria-hidden="true"></span></button>
     <main id="main">
       <section class="hero wrap" id="home" aria-labelledby="hero-title">
         <div class="hero-copy">
@@ -135,13 +136,8 @@
             بدأت بكتاب في الكاظمية. واليوم، نرافق الطالب من صفحات المكتبة إلى
             القاعة والمدرسة والمنصة.
           </p>
-          <a class="round-link" href="#story"
-            ><span class="round-arrow" aria-hidden="true">↓</span
-            ><span>اتبع النقطة<small>واكتشف حكاية الأزل</small></span></a
-          >
         </div>
         <div class="hero-art" aria-hidden="true">
-          <span class="hero-coordinate">من هنا بدأت الحكاية ↘</span>
           <div class="hero-orbit"></div>
           <div class="hero-logo logo-composition">
             <img
@@ -156,7 +152,7 @@
         <div class="hero-bottom">
           <span>خيار الطالب والأهل</span
           ><span class="hero-years" dir="ltr">2010 <i></i> 2026</span
-          ><a href="#story">حكاية تكبر معك <span aria-hidden="true">↓</span></a>
+          >
         </div>
       </section>
       <section
@@ -175,16 +171,6 @@
               />
               حكاية الأزل</a
             >
-            <div class="story-tools">
-              <button
-                id="motion-toggle"
-                type="button"
-                aria-pressed="false"
-                hidden
-              >
-                قراءة دون حركة</button
-              ><a href="#world">تجاوز الحكاية ↙</a>
-            </div>
           </div>
           <div class="story-panels wrap">
             <article class="story-panel scene-library" data-chapter="0">
@@ -197,7 +183,7 @@
               <div class="scene-art book-scene">
                 <div class="book-stack" aria-hidden="true">
                   <div class="book-leaf leaf-back">
-                    <span>لكل سؤال<br />بداية.</span>
+                    <span>لكل أثر<br />بداية.</span>
                   </div>
                   <div class="book-leaf leaf-middle">
                     <span>الأزل<br /><small>مكتبة ودار للنشر</small></span
@@ -228,7 +214,7 @@
               <div class="story-copy">
                 <p class="eyebrow">معهد الأزل الأهلي / ٢٠١٢</p>
                 <h2><span>من الصفحة،</span><em>إلى القاعة.</em></h2>
-                <p>مكان للفهم، ومساحة للسؤال، ومتابعة تقرّب الطالب من هدفه.</p>
+                <p>محاضرات، امتحانات، ومتابعة. مع الطالب من أول درس إلى يوم الامتحان.</p>
               </div>
               <div class="scene-art class-scene">
                 <div class="class-composition">
@@ -241,13 +227,13 @@
                     ><span class="class-slice slice-two"></span
                     ><span class="class-slice slice-three"></span>
                   </div>
-                  <span class="class-label">مساحة لكل سؤال.</span>
+                  <span class="class-label">من الدرس إلى الهدف.</span>
                   <div class="class-rule" aria-hidden="true"></div>
                 </div>
                 <span class="story-dot-anchor" id="chapter-anchor-1"></span
                 ><span class="scene-caption"
                   >من قاعات معهد الأزل
-                  <span dir="ltr">A PLACE TO GROW</span></span
+                  <span dir="ltr">TOWARDS YOUR GOAL</span></span
                 >
               </div>
             </article>
@@ -255,11 +241,11 @@
               <span class="scene-year" aria-hidden="true" dir="ltr">2020</span>
               <div class="story-copy">
                 <p class="eyebrow">مدارس الأزل / ٢٠٢٠ و٢٠٢٤</p>
-                <h2><span>كبر المكان.</span><em>وبقي الاهتمام.</em></h2>
-                <p>ثانوية للبنات، ثم للبنين. والأزل ترافق اليوم الدراسي كله.</p>
+                <h2><span>مدارس الأزل.</span><em>أبعد من التعليم.</em></h2>
+                <p>في مدارس الأزل، نطمح إلى بناء الإنسان، ونفتح للطموح أفقاً يتجاوز الدرس.</p>
               </div>
               <div class="scene-art school-scene">
-                <div class="school-portals">
+                <div class="beyond-frame" aria-hidden="true"><span>BEYOND EDUCATION</span></div><div class="school-portals">
                   <figure class="school-portal portal-one">
                     <img
                       src="public/images/school.webp"
@@ -288,7 +274,7 @@
                 <span class="story-dot-anchor" id="chapter-anchor-2"></span
                 ><span class="scene-caption"
                   >من مبنى مدارس الأزل
-                  <span dir="ltr">ROOM FOR AMBITION</span></span
+                  <span dir="ltr">BEYOND EDUCATION</span></span
                 >
               </div>
             </article>
@@ -305,15 +291,7 @@
                 <div class="phone-wrap">
                   <div class="phone">
                     <div class="phone-camera" aria-hidden="true"></div>
-                    <div class="phone-identity">
-                      <img
-                        src="public/brand/logo-navy.svg"
-                        width="120"
-                        height="124"
-                        alt="الأزل"
-                      /><span>منصة الأزل</span><small>التعليم أقرب.</small
-                      ><i aria-hidden="true">↗</i>
-                    </div>
+                    <img class="platform-screen" src="public/scenes/منصة الأزل/Home-Guest.webp" width="1440" height="3200" alt="الواجهة الفعلية لمنصة الأزل: الدروس المجانية والمواد والدورات" loading="lazy" decoding="async" />
                   </div>
                 </div>
                 <span class="digital-caption"
@@ -329,8 +307,8 @@
               <span class="scene-year" aria-hidden="true">الأزل</span>
               <div class="story-copy">
                 <p class="eyebrow">الأزل اليوم</p>
-                <h2><span>أماكن تتغيّر.</span><em>وقربٌ يبقى.</em></h2>
-                <p>من أول كتاب إلى الخطوة القادمة. خيار الطالب والأهل.</p>
+                <h2><span>والخطوة القادمة،</span><em>تبدأ بيك.</em></h2>
+                <p>حكاية بدأت بكتاب. واليوم، اختَر مكانك في الأزل وابدأ حكايتك.</p>
               </div>
               <div class="scene-art story-lockup">
                 <div class="return-lines" aria-hidden="true">
@@ -363,182 +341,25 @@
                 <span>اليوم</span> الأزل
               </button>
             </nav>
-            <span class="story-scroll-hint">حرّك الصفحة، تتحرّك الحكاية ↓</span>
           </div>
         </div>
       </section>
-      <section
-        class="manifesto wrap"
-        id="promise"
-        aria-labelledby="promise-title"
-      >
-        <p class="eyebrow">ما الذي يبقى، مهما كبرنا؟</p>
-        <h2 id="promise-title" class="word-reveal">
-          <span>أن</span> <span>نرى</span> <span>الطالب،</span><br /><span
-            >قبل</span
-          >
-          <span>أن</span> <span>نرى</span> <span>النتيجة.</span>
-        </h2>
-        <div class="promise-points">
-          <article>
-            <span>01 / الفهم</span>
-            <h3>مساحة لكل سؤال.</h3>
-            <p>شرح ومراجعة وحوار. لأن الفهم يبدأ حين يجد الطالب من يسمعه.</p>
-          </article>
-          <article>
-            <span>02 / المتابعة</span>
-            <h3>خطوة بخطوة.</h3>
-            <p>متابعة يومية وامتحانات منتظمة، مع الأهل كشريك في الرحلة.</p>
-          </article>
-          <article>
-            <span>03 / القرب</span>
-            <h3>بالمكان الذي يناسبك.</h3>
-            <p>
-              على الورق، في القاعة، أو عبر الشاشة. يتغيّر المكان ويستمر
-              الاهتمام.
-            </p>
-          </article>
+      <!-- registration:start -->
+      <section class="registration section-space" id="registration" aria-labelledby="registration-title">
+        <span id="world" class="section-alias" aria-hidden="true"></span><span id="contact" class="section-alias" aria-hidden="true"></span>
+        <div class="wrap">
+          <header class="registration-heading"><div><p class="eyebrow">والخطوة هسّه إلك</p><h2 id="registration-title">اختَر مكانك.<br/><em>وابدأ.</em></h2></div><div class="registration-intro"><span class="registration-year" dir="ltr">2026–2027</span><p>مدرسة لو معهد؟<br/>اختَر حتى تظهر استماراتك.</p></div></header>
+          <nav class="registration-choices" aria-label="اختيار جهة التسجيل"><a href="#school-registration" data-registration-choice="school" aria-controls="school-registration" aria-expanded="false"><span class="choice-number" dir="ltr">01</span><strong>مدرسة</strong><small>ثانويات الأزل للبنين والبنات</small><span class="choice-arrow" aria-hidden="true">↙</span></a><a href="#institute-registration" data-registration-choice="institute" aria-controls="institute-registration" aria-expanded="false"><span class="choice-number" dir="ltr">02</span><strong>معهد</strong><small>معهد الأزل الأهلي</small><span class="choice-arrow" aria-hidden="true">↙</span></a></nav>
+          <section class="registration-group" id="school-registration" data-entity="schools" aria-labelledby="school-registration-title"><div class="registration-group-heading"><span class="group-index" dir="ltr">01 / SCHOOLS</span><h3 id="school-registration-title">مدارس الأزل</h3><p class="school-motto">أبعد من التعليم.<span lang="en" dir="ltr">Beyond Education</span></p><p class="group-description">ثانويات الأزل الأهلية<br/>للبنين والبنات</p><div class="registration-contacts"><a href="tel:+9647700330666">البنات <b dir="ltr">0770 0330 666</b></a><a href="tel:+9647731999246">البنين <b dir="ltr">0773 1999 246</b></a></div></div><div class="registration-forms"><article class="registration-form" data-form="school-general"><span class="form-number" aria-hidden="true" dir="ltr">01</span><div class="form-copy"><p class="form-tag">التسجيل المدرسي</p><h4>التسجيل للعام الدراسي <bdi class="academic-year">2026–2027</bdi></h4><p>استمارة التسجيل الأولي لطلبة مدارس الأزل للبنين والبنات.</p><details class="form-details"><summary>تفاصيل التسجيل <span aria-hidden="true">+</span></summary><ul><li>تسجيل أولي لطلبة ثانويات الأزل للبنين والبنات.</li><li>أدخل المرحلة الدراسية وبيانات الطالب وأولياء الأمور، ثم يتواصل فريق المدرسة لاستكمال إجراءات التسجيل.</li></ul></details></div><a href="https://forms.gle/oQkqcpU7M1kTSaCV9" class="form-action" target="_blank" rel="noopener" data-form-id="school-general" data-institution="schools" aria-label="فتح استمارة التسجيل للعام الدراسي 2026–2027">افتح الاستمارة <span aria-hidden="true">↗</span></a></article><article class="registration-form" data-form="school-elite"><span class="form-number" aria-hidden="true" dir="ltr">02</span><div class="form-copy"><p class="form-tag">النخبة والأوائل</p><h4>شعبتا النخبة والأوائل</h4><p>المدرسة والمعهد بقسط واحد. اختر الشعبة واطّلع على التفاصيل داخل الاستمارة.</p><details class="form-details"><summary>تفاصيل التسجيل <span aria-hidden="true">+</span></summary><ul><li>اختر شعبة النخبة أو شعبة الأوائل التي ترغب بالانضمام إليها.</li><li>يجمع البرنامج بين المدرسة والمعهد بقسط واحد. تفاصيل القسط والتقسيط موضّحة في الاستمارة.</li></ul></details></div><a href="https://forms.gle/3yMJ8bNcFgB5Aaq86" class="form-action" target="_blank" rel="noopener" data-form-id="school-elite" data-institution="schools" aria-label="فتح استمارة شعبتا النخبة والأوائل">افتح الاستمارة <span aria-hidden="true">↗</span></a></article></div></section>
+          <section class="registration-group" id="institute-registration" data-entity="institute" aria-labelledby="institute-registration-title"><div class="registration-group-heading"><span class="group-index" dir="ltr">02 / INSTITUTE</span><h3 id="institute-registration-title">معهد الأزل الأهلي</h3><p class="group-description">اختَر مرحلتك وبرنامجك،<br/>واطّلع على تفاصيل التسجيل.</p><div class="registration-contacts"><a href="tel:+9647818041198"><b dir="ltr">0781 804 1198</b></a><a href="https://wa.me/9647818041198" target="_blank" rel="noopener">واتساب المعهد ↗</a></div></div><div class="registration-forms"><article class="registration-form" data-form="institute-general"><span class="form-number" aria-hidden="true" dir="ltr">01</span><div class="form-copy"><p class="form-tag">السادس الإعدادي</p><h4>السادس الإعدادي · المدارس الاعتيادية</h4><p>التسجيل للعام الدراسي 2026–2027 واختيار المواد والمدرسين.</p><details class="form-details"><summary>تفاصيل التسجيل <span aria-hidden="true">+</span></summary><ul><li>خاصة بطلبة السادس الإعدادي في المدارس الاعتيادية.</li><li>يمكنك اختيار المواد والمدرسين، وكتابة ملاحظاتك واستفساراتك في الخانة المخصصة داخل الاستمارة.</li></ul></details></div><a href="https://docs.google.com/forms/d/e/1FAIpQLScWrr1JUQR0tO4QEBgd7VXid9txKoh46XIb5H_hSPDjA0U3TQ/viewform" class="form-action" target="_blank" rel="noopener" data-form-id="institute-general" data-institution="institute" aria-label="فتح استمارة السادس الإعدادي · المدارس الاعتيادية">افتح الاستمارة <span aria-hidden="true">↗</span></a></article><article class="registration-form" data-form="institute-100"><span class="form-number" aria-hidden="true" dir="ltr">02</span><div class="form-copy"><p class="form-tag">المتميزون والمتفوقون</p><h4>برنامج +100</h4><p>استمارة البرنامج المخصص لطلبة مدارس المتميزين والمتفوقين.</p><details class="form-details"><summary>تفاصيل التسجيل <span aria-hidden="true">+</span></summary><ul><li>برنامج مخصص لطلبة مدارس المتميزين والمتفوقين.</li><li>تُستخدم بيانات الاستمارة للنظر في طلب الانضمام إلى برنامج +100.</li></ul></details></div><a href="https://forms.gle/smauZDrhsJdvoHbK7" class="form-action" target="_blank" rel="noopener" data-form-id="institute-100" data-institution="institute" aria-label="فتح استمارة برنامج +100">افتح الاستمارة <span aria-hidden="true">↗</span></a></article><article class="registration-form" data-form="institute-challenge"><span class="form-number" aria-hidden="true" dir="ltr">03</span><div class="form-copy"><p class="form-tag">دورة التحدي</p><h4>دورة التحدي · أساس</h4><p>اختر مرحلتك الدراسية والمواد والمدرسين من الاستمارة.</p><details class="form-details"><summary>تفاصيل التسجيل <span aria-hidden="true">+</span></summary><ul><li>اختر مرحلتك الدراسية ثم المواد والمدرسين.</li><li>يمكن اختيار «بدون» في المادة التي لا ترغب بالتسجيل فيها.</li></ul></details></div><a href="https://forms.gle/haodN5CpNzusTroN8" class="form-action" target="_blank" rel="noopener" data-form-id="institute-challenge" data-institution="institute" aria-label="فتح استمارة دورة التحدي · أساس">افتح الاستمارة <span aria-hidden="true">↗</span></a></article></div></section>
+          <p class="registration-note">تُفتح الاستمارات على Google Forms. فريق الأزل يتابع وياك إكمال التسجيل.</p>
         </div>
       </section>
-      <section
-        class="world section-space wrap"
-        id="world"
-        aria-labelledby="world-title"
-      >
-        <div class="section-heading">
-          <p class="eyebrow">عالم الأزل / اختر خطوتك</p>
-          <div>
-            <h2 id="world-title">
-              أكثر من مكان.<br />نفس <span class="underlined">الاهتمام.</span>
-            </h2>
-            <p>
-              في القاعة، في المدرسة، أو من البيت.<br />تجد الأزل حيث تبدأ خطوتك
-              التالية.
-            </p>
-          </div>
-        </div>
-        <div class="world-layout">
-          <div class="entity-list">
-            <details class="entity" open data-entity="institute">
-              <summary>
-                <span class="entity-number">01</span>
-                <h3>معهد الأزل الأهلي</h3>
-                <span class="entity-toggle" aria-hidden="true">+</span>
-              </summary>
-              <div class="entity-body">
-                <p>
-                  فهمٌ أعمق للمادة، متابعة يومية، ووقتٌ لكل سؤال. بيئة تعلّم
-                  تساند الطالب في المراحل الدراسية والوزارية.
-                </p>
-                <span class="entity-address"
-                  >الكاظمية · مجمع الزهراء · الطابق الثالث</span
-                ><a
-                  href="https://wa.me/9647818041198"
-                  target="_blank"
-                  rel="noopener"
-                  >تواصل مع المعهد <span aria-hidden="true">↖</span></a
-                >
-              </div>
-            </details>
-            <details class="entity" data-entity="schools">
-              <summary>
-                <span class="entity-number">02</span>
-                <h3>مدارس الأزل</h3>
-                <span class="entity-toggle" aria-hidden="true">+</span>
-              </summary>
-              <div class="entity-body">
-                <p>
-                  ثانويتان للبنات والبنين. يوم دراسي منظم، واهتمام بالتعلّم
-                  وبالطالب الذي وراء كل نتيجة.
-                </p>
-                <span class="entity-address"
-                  >البنات منذ ٢٠٢٠ · البنين منذ ٢٠٢٤</span
-                >
-                <div class="entity-links">
-                  <a
-                    href="https://wa.me/9647700330666"
-                    target="_blank"
-                    rel="noopener"
-                    >ثانوية البنات ↖</a
-                  ><a
-                    href="https://wa.me/9647731999246"
-                    target="_blank"
-                    rel="noopener"
-                    >ثانوية البنين ↖</a
-                  >
-                </div>
-              </div>
-            </details>
-            <details class="entity" data-entity="platform">
-              <summary>
-                <span class="entity-number">03</span>
-                <h3>منصة الأزل التعليمية</h3>
-                <span class="entity-toggle" aria-hidden="true">+</span>
-              </summary>
-              <div class="entity-body">
-                <p>
-                  خبرة الأزل أقرب إليك، عبر محتوى رقمي للسادس الإعدادي، مع كادر
-                  متخصص في التعليم عن بُعد.
-                </p>
-                <span class="entity-address">تعلّم من مكانك، وراجع بوقتك</span
-                ><a
-                  href="https://instagram.com/alazalplatform"
-                  target="_blank"
-                  rel="noopener"
-                  >تعرّف على المنصة <span aria-hidden="true">↖</span></a
-                >
-              </div>
-            </details>
-            <details class="entity" data-entity="library">
-              <summary>
-                <span class="entity-number">04</span>
-                <h3>مكتبة ودار الأزل</h3>
-                <span class="entity-toggle" aria-hidden="true">+</span>
-              </summary>
-              <div class="entity-body">
-                <p>
-                  كتب، ملازم، قرطاسية، وطباعة. كل ما يرافق يومك الدراسي، من
-                  المكان الذي بدأت منه حكايتنا.
-                </p>
-                <span class="entity-address"
-                  >الكاظمية · مجمع الزهراء · الطابق الأول</span
-                ><a
-                  href="https://wa.me/9647705433370"
-                  target="_blank"
-                  rel="noopener"
-                  >تواصل مع المكتبة <span aria-hidden="true">↖</span></a
-                >
-              </div>
-            </details>
-          </div>
-          <figure class="entity-photo">
-            <div class="platform-preview">
-              <img
-                src="public/brand/logo-navy.svg"
-                width="120"
-                height="124"
-                alt="الأزل"
-              /><span>منصة الأزل التعليمية</span>
-            </div>
-            <img
-              id="entity-image"
-              src="public/images/campus.webp"
-              alt="قاعات معهد الأزل المهيأة للدراسة"
-              width="1000"
-              height="667"
-              loading="lazy"
-            />
-            <figcaption>
-              <span id="entity-caption">مساحة للفهم، قبل أي شيء.</span
-              ><span id="entity-year" dir="ltr">EST. 2012</span>
-            </figcaption>
-          </figure>
-        </div>
-      </section>
+      <!-- registration:end -->
 <!-- arrival:start -->
       <section class="arrival section-space" id="locations" aria-labelledby="arrival-title">
         <div class="wrap">
-          <header class="arrival-heading"><div><p class="eyebrow">بغداد / الكاظمية</p><h2 id="arrival-title">طريقك إلى <em>الأزل.</em></h2></div><a class="arrival-contact-shortcut" href="#contact" aria-label="أرقام التواصل والحسابات">↗</a></header>
+          <header class="arrival-heading"><div><p class="eyebrow">بغداد / الكاظمية</p><h2 id="arrival-title">طريقك إلى <em>الأزل.</em></h2></div><a class="arrival-contact-shortcut" href="#registration" aria-label="التسجيل في الأزل">↗</a></header>
           <div class="destination-picker" role="group" aria-label="اختَر وجهتك"><button type="button" data-destination="institute" aria-pressed="true" aria-controls="arrival-map"><span dir="ltr">01</span>المعهد<span aria-hidden="true">↙</span></button><button type="button" data-destination="girls" aria-pressed="false" aria-controls="arrival-map"><span dir="ltr">02</span>ثانوية البنات<span aria-hidden="true">↙</span></button><button type="button" data-destination="boys" aria-pressed="false" aria-controls="arrival-map"><span dir="ltr">03</span>ثانوية البنين<span aria-hidden="true">↙</span></button></div>
           <div class="arrival-layout" data-active-destination="institute">
             <div class="district-view" id="arrival-map">
@@ -588,129 +409,10 @@
         </div>
       </section>
       <!-- arrival:end -->
-      <section class="everyday" aria-labelledby="everyday-title">
-        <img
-          src="public/images/students.webp"
-          alt="طلاب الأزل أثناء محاضرة في المعهد"
-          width="1400"
-          height="933"
-          loading="lazy"
-        />
-        <div class="everyday-copy wrap">
-          <p class="eyebrow">الأزل، في يومها العادي.</p>
-          <h2 id="everyday-title">
-            هنا تُسأل الأسئلة.<br />وهنا تبدأ الإجابات.
-          </h2>
-          <span>من قاعاتنا في الكاظمية</span>
-        </div>
-      </section>
-      <section
-        class="questions section-space wrap"
-        aria-labelledby="questions-title"
-      >
-        <div>
-          <p class="eyebrow">قبل خطوتك الأولى</p>
-          <h2 id="questions-title">خلّها واضحة.</h2>
-          <p>هذه إجابات مختصرة، والتفاصيل عند فريق كل مؤسسة.</p>
-        </div>
-        <div class="question-list">
-          <details>
-            <summary>ماذا تضم مجموعة الأزل؟<span>+</span></summary>
-            <p>
-              مكتبة ودار للطباعة والنشر، ومعهد الأزل الأهلي، وثانويتان للبنات
-              والبنين، ومنصة الأزل التعليمية. بدأت المسيرة في الكاظمية عام ٢٠١٠.
-            </p>
-          </details>
-          <details>
-            <summary>كيف أسجّل في المعهد؟<span>+</span></summary>
-            <p>
-              تواصل مباشرة مع المعهد عبر واتساب، أو افتح
-              <a
-                class="text-link"
-                href="https://docs.google.com/forms/d/e/1FAIpQLScWrr1JUQR0tO4QEBgd7VXid9txKoh46XIb5H_hSPDjA0U3TQ/viewform"
-                target="_blank"
-                rel="noopener"
-                data-cta="institute_registration"
-                >استمارة التسجيل</a
-              >.
-            </p>
-          </details>
-          <details>
-            <summary>هل توجد مدارس للبنات والبنين؟<span>+</span></summary>
-            <p>
-              نعم. تأسست ثانوية البنات في ٢٠٢٠، وثانوية البنين في ٢٠٢٤. لكل
-              منهما رقم تواصل مباشر في قسم عالم الأزل.
-            </p>
-          </details>
-          <details>
-            <summary>لمن تتوجّه المنصة التعليمية؟<span>+</span></summary>
-            <p>
-              تقدّم منصة الأزل محتوى رقمياً لطلبة السادس الإعدادي، مع كادر متخصص
-              في التعليم عن بُعد.
-            </p>
-          </details>
-          <details>
-            <summary>أين أعرف الأجور وأوقات الدراسة؟<span>+</span></summary>
-            <p>
-              تواصل مع المؤسسة التي تناسبك من قسم عالم الأزل، للحصول على الأجور
-              والمواعيد وتفاصيل التسجيل الحالية من فريقها مباشرة.
-            </p>
-          </details>
-        </div>
-      </section>
-      <section class="contact" id="contact" aria-labelledby="contact-title">
-        <div class="wrap contact-inner">
-          <div class="contact-directory-heading"><div><p class="eyebrow">لكل سؤال، أهله.</p><h2 id="contact-title">نسمعك.<br/><span>ونوصلك.</span></h2></div><p>اختَر مكانك في الأزل.<br/>كل الأرقام والحسابات، هنا.</p></div>
-          <div class="contact-directory"><details class="contact-entry" id="contact-institute" open><summary><span class="contact-index" dir="ltr">01</span><h3>معهد الأزل الأهلي</h3><span class="contact-expand" aria-hidden="true">+</span></summary><div class="contact-entry-body"><p>الكاظمية · ساحة الزهراء · مجمع الزهراء · الطابق الثالث</p><div class="contact-primary"><a href="tel:+9647818041198" dir="ltr">0781 804 1198</a><a class="contact-wa" href="https://wa.me/9647818041198" target="_blank" rel="noopener">واتساب ↗</a></div><div class="contact-socials"><a href="https://www.instagram.com/alazal.institute/" target="_blank" rel="noopener">إنستغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/alazalinstitutee" target="_blank" rel="noopener">قناة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/alazal_institute" target="_blank" rel="noopener">مراسلة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://www.facebook.com/Alazal.institute" target="_blank" rel="noopener">فيسبوك <span aria-hidden="true">↗</span></a></div><a class="contact-directions" href="#locations" data-contact-destination="institute">دليل الوصول إلى المعهد ←</a></div></details><details class="contact-entry" id="contact-girls" ><summary><span class="contact-index" dir="ltr">02</span><h3>ثانوية الأزل للبنات</h3><span class="contact-expand" aria-hidden="true">+</span></summary><div class="contact-entry-body"><p>الكاظمية · ساحة عبدالمحسن الكاظمي · فرع مستشفى الضرغام</p><div class="contact-primary"><a href="tel:+9647700330666" dir="ltr">0770 0330 666</a><a class="contact-wa" href="https://wa.me/9647700330666" target="_blank" rel="noopener">واتساب ↗</a></div><div class="contact-socials"><a href="https://www.instagram.com/alazal_schools/" target="_blank" rel="noopener">إنستغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/alazal_schools" target="_blank" rel="noopener">قناة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/az_sup" target="_blank" rel="noopener">مراسلة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://www.facebook.com/alazal_schools" target="_blank" rel="noopener">فيسبوك <span aria-hidden="true">↗</span></a></div><a class="contact-directions" href="#locations" data-contact-destination="girls">دليل الوصول إلى ثانوية البنات ←</a></div></details><details class="contact-entry" id="contact-boys" ><summary><span class="contact-index" dir="ltr">03</span><h3>ثانوية الأزل للبنين</h3><span class="contact-expand" aria-hidden="true">+</span></summary><div class="contact-entry-body"><p>الكاظمية · شارع أكد · قرب متنزه ١٤ تموز · يسار عيادة حرير عند مواجهتها</p><div class="contact-primary"><a href="tel:+9647731999246" dir="ltr">0773 1999 246</a><a class="contact-wa" href="https://wa.me/9647731999246" target="_blank" rel="noopener">واتساب ↗</a></div><div class="contact-socials"><a href="https://www.instagram.com/alazal_schools/" target="_blank" rel="noopener">إنستغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/alazal_schools" target="_blank" rel="noopener">قناة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/az_sup" target="_blank" rel="noopener">مراسلة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://www.facebook.com/alazal_schools" target="_blank" rel="noopener">فيسبوك <span aria-hidden="true">↗</span></a></div><a class="contact-directions" href="#locations" data-contact-destination="boys">دليل الوصول إلى ثانوية البنين ←</a></div></details><details class="contact-entry" id="contact-platform" ><summary><span class="contact-index" dir="ltr">04</span><h3>منصة الأزل التعليمية</h3><span class="contact-expand" aria-hidden="true">+</span></summary><div class="contact-entry-body"><p>الأزل، من مكانك.</p><div class="contact-primary"><a href="tel:+9647818041198" dir="ltr">0781 804 1198</a><a class="contact-wa" href="https://wa.me/9647818041198" target="_blank" rel="noopener">واتساب ↗</a></div><div class="contact-socials"><a href="https://www.instagram.com/alazalplatform/" target="_blank" rel="noopener">إنستغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/alazalplatform" target="_blank" rel="noopener">قناة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://www.facebook.com/alazalplatform" target="_blank" rel="noopener">فيسبوك <span aria-hidden="true">↗</span></a></div></div></details><details class="contact-entry" id="contact-library" ><summary><span class="contact-index" dir="ltr">05</span><h3>مكتبة الأزل</h3><span class="contact-expand" aria-hidden="true">+</span></summary><div class="contact-entry-body"><p>الكاظمية · مجمع الزهراء · الطابق الأول</p><div class="contact-primary"><a href="tel:+9647705433370" dir="ltr">0770 543 3370</a><a class="contact-wa" href="https://wa.me/9647705433370" target="_blank" rel="noopener">واتساب ↗</a></div><div class="contact-socials"><a href="https://www.instagram.com/alazallibrary/" target="_blank" rel="noopener">إنستغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/alazallibrary" target="_blank" rel="noopener">قناة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/al_azal" target="_blank" rel="noopener">مراسلة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://www.facebook.com/libraryalazal" target="_blank" rel="noopener">فيسبوك <span aria-hidden="true">↗</span></a></div></div></details><details class="contact-entry" id="contact-publisher" ><summary><span class="contact-index" dir="ltr">06</span><h3>دار الأزل</h3><span class="contact-expand" aria-hidden="true">+</span></summary><div class="contact-entry-body"><p>للطباعة والنشر وتفاصيل الطلبات</p><div class="contact-primary"><a href="tel:+9647705433370" dir="ltr">0770 543 3370</a><a class="contact-wa" href="https://wa.me/9647705433370" target="_blank" rel="noopener">واتساب ↗</a></div><div class="contact-socials"><a href="https://www.instagram.com/Dar_alazal/" target="_blank" rel="noopener">إنستغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/alazallibrary" target="_blank" rel="noopener">قناة تيليغرام <span aria-hidden="true">↗</span></a><a href="https://t.me/az_p_p" target="_blank" rel="noopener">مراسلة تيليغرام <span aria-hidden="true">↗</span></a></div></div></details></div>
-        </div>
-      </section>
     </main>
-    <footer class="footer wrap">
-      <div class="footer-top">
-        <a href="#home" class="footer-brand"
-          ><img
-            src="public/brand/logo-white.svg"
-            width="56"
-            height="58"
-            alt="الأزل"
-          /><span
-            >مجموعة الأزل التعليمية<small>خيار الطالب والأهل</small></span
-          ></a
-        >
-        <div class="footer-links">
-          <a
-            href="https://instagram.com/alazal.institute"
-            target="_blank"
-            rel="noopener"
-            >إنستغرام ↗</a
-          ><a
-            href="https://t.me/alazalinstitutee"
-            target="_blank"
-            rel="noopener"
-            >تيليغرام ↗</a
-          ><a
-            href="https://www.facebook.com/Alazal.institute"
-            target="_blank"
-            rel="noopener"
-            >فيسبوك ↗</a
-          >
-        </div>
-        <a href="#home" class="back-top"
-          >إلى البداية <span aria-hidden="true">↑</span></a
-        >
-      </div>
-      <div class="footer-bottom">
-        <span>© <span id="year">2026</span> مجموعة الأزل التعليمية</span
-        ><span>من الكاظمية، لكل طموح.</span
-        ><span dir="ltr">ALAZAL — SINCE 2010</span>
-        <a href="privacy.html">الخصوصية</a>
-        <div class="meta-privacy" id="meta-privacy" hidden>
-          <span>نستخدم Meta Pixel لقياس الزيارات وعرض إعلانات الأزل.</span>
-          <a href="privacy.html">تفاصيل القياس والخصوصية</a>
-          <button type="button" id="meta-settings" hidden>إيقاف قياس Meta</button>
-          <span id="meta-consent-status" class="sr-only" aria-live="polite"></span>
-        </div>
-      </div>
-    </footer>
+    <div class="site-utility wrap">
+      <details class="measurement-settings"><summary>الخصوصية وإعدادات القياس</summary><div class="measurement-body"><a href="privacy.html">سياسة الخصوصية ↗</a><div id="meta-privacy" hidden><p>نستخدم Meta Pixel لقياس الزيارات وعرض إعلانات الأزل.</p><button type="button" id="meta-settings" hidden>إيقاف قياس Meta</button><span id="meta-consent-status" class="sr-only" aria-live="polite"></span></div></div></details>
+      <a href="#home" aria-label="العودة إلى بداية الموقع">↑</a>
+    </div>
   </body>
 </html>
