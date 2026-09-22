@@ -1,6 +1,6 @@
 # Alazal Meta Pixel setup
 
-The integration is installed in the website code. Live delivery remains OFF until your numeric Pixel ID is entered in `analytics-config.js`. A Pixel ID is public; an access token is not needed for this browser integration.
+The owner-provided test Pixel **28576937971945403** is configured in `analytics-config.js`. It runs on `alazalgroup.com` and `www.alazalgroup.com` only after the visitor accepts Meta advertising measurement. A Pixel ID is public; an access token is not needed for this browser integration.
 
 ## 1. Create the Pixel in your own business
 
@@ -13,7 +13,9 @@ The integration is installed in the website code. Live delivery remains OFF unti
 
 ## 2. Verify before spending
 
-Open the dataset's **Test events**, enter `https://alazalgroup.com`, and open the website from that screen. Accept the site's **قياس إعلانات Meta** choice. Confirm **PageView**, select a different institution to get **ViewContent**, and click its WhatsApp link to get **Contact**. A contact click opens the contact destination but does not send a message automatically.
+In [Events Manager](https://business.facebook.com/events_manager), select the dataset with ID **28576937971945403** and open **Test events**. Under browser events, enter `https://alazalgroup.com` and open the website from that screen. Keep Events Manager open in the same browser. Accept **أوافق** in the site's **قياس إعلانات Meta** panel. If you previously declined, use **إعدادات إعلانات Meta** in the footer to change your choice. Reload the page if consent was already granted before starting the test.
+
+Confirm **PageView**, select a different institution in the map to get **ViewContent**, and click its WhatsApp link to get **Contact**. Return to Test events to inspect the event names and `facility` / `channel` parameters. A contact click opens the contact destination but does not send a message automatically. Test the live site: `127.0.0.1` and `localhost` deliberately do not send real Meta traffic. If the consent panel is missing immediately after deployment, hard-refresh with **Ctrl+Shift+R**.
 
 | Event | Meaning in this website | Useful parameters |
 |---|---|---|
