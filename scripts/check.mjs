@@ -1,6 +1,7 @@
 import { readFile, access, stat } from "node:fs/promises";
 import { gzipSync } from "node:zlib";
 import assert from "node:assert/strict";
+import { createHash } from 'node:crypto';
 
 const html = await readFile("index.html", "utf8");
 const css = await readFile("styles.css", "utf8");
@@ -20,7 +21,7 @@ for (const reference of references) {
       `Broken section link: ${reference}`,
     );
   else if (!/^(https?:|tel:)/.test(reference))
-    await access(decodeURIComponent(reference));
+    await access(decodeURIComponent(reference.split(/[?#]/)[0]));
 }
 for (const [, font] of (css + arrivalCss).matchAll(/url\(['"]?([^'"\)]+)['"]?\)/g))
   await access(font);
@@ -71,6 +72,9 @@ assert(
 );
 const model = await readFile("public/brand-scene.js");
 const analytics = await readFile('public/analytics.js');
+const analyticsVersion = createHash('sha256').update(analytics).digest('hex').slice(0, 12);
+assert(html.includes(`public/analytics.js?v=${analyticsVersion}`), 'Analytics URL must match the generated bundle to avoid stale Pixel settings');
+assert(!analytics.toString().includes('../analytics-config.js'), 'Bundle the Pixel settings to avoid a separately cached configuration');
 assert(gzipSync(analytics).length < 5 * 1024, 'Local analytics integration exceeds 5 KB gzip');
 assert(!/connect\.facebook\.net|facebook\.com\/tr\?/.test(html), 'Meta must load through the preference-aware module, without a duplicate snippet');
 await access('analytics-config.js');

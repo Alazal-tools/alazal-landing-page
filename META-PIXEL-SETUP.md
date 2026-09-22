@@ -9,7 +9,7 @@ This is an automatic-loading configuration, not a jurisdiction-aware consent sys
 1. Open [Meta Events Manager](https://business.facebook.com/events_manager) and select the Alazal business portfolio that owns your ad account.
 2. Use **Connect data → Web**. Create a dataset named **Alazal Website**, or select an existing dataset you own. Meta may label the resource “Dataset” or “Pixel.” The exact setup labels can differ between accounts.
 3. Select **Meta Pixel / browser events**, then **Install code manually**. This website already contains the integration; do not paste a second base snippet or use the Event Setup Tool to duplicate its events.
-4. In the dataset's **Settings**, copy the numeric **Pixel/Dataset ID**. Use the ID associated with its web Pixel, not a business ID or ad-account ID. Send that ID to the website maintainer, or put it between the quotes in `analytics-config.js` and deploy that file.
+4. In the dataset's **Settings**, copy the numeric **Pixel/Dataset ID**. Use the ID associated with its web Pixel, not a business ID or ad-account ID. Send that ID to the website maintainer, or put it between the quotes in `analytics-config.js`, run `npm run build`, and deploy the generated assets.
 5. Under **Business settings → Data sources → Datasets → Connected assets**, connect the ad account that will advertise Alazal. This should be done by the business owner/admin.
 6. Leave **automatic advanced matching** and **automatic events without code** off for this implementation. The code explicitly sends the events listed below. No Conversions API token, server setup or paid gateway is required for the browser Pixel.
 
@@ -47,7 +47,7 @@ Use service-relevant creative: someone interested in the institute sees the inst
 
 ## Maintenance and local testing
 
-- `analytics-config.js`: public Pixel ID and allowed live domains; changing these does not require rebuilding the bundle.
+- `analytics-config.js`: public Pixel ID and allowed live domains; run `npm run build` after changing these. The build bundles the settings and versions the analytics URL to prevent stale configurations.
 - `src/analytics.js`: footer tracking preference and explicit event mapping.
 - `src/meta-pixel.js`: async delivery, visitor opt-out policy, event allowlist and safe parameter filtering.
 - `public/analytics.js`: generated bundle; run `npm run build` after source changes.
