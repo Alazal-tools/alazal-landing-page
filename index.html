@@ -58,6 +58,7 @@
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="arrival.css" />
     <script type="module" src="script.js"></script>
+    <script type="module" src="public/analytics.js"></script>
     <script
       async
       src="https://www.googletagmanager.com/gtag/js?id=G-YSSZ6LJNDC"
@@ -702,7 +703,20 @@
         <span>© <span id="year">2026</span> مجموعة الأزل التعليمية</span
         ><span>من الكاظمية، لكل طموح.</span
         ><span dir="ltr">ALAZAL — SINCE 2010</span>
+        <a href="privacy.html">الخصوصية</a>
+        <button type="button" id="meta-settings" hidden>إعدادات إعلانات Meta</button>
       </div>
     </footer>
+    <section class="meta-consent" id="meta-consent" role="region" aria-labelledby="meta-consent-title" hidden>
+      <div>
+        <h2 id="meta-consent-title">قياس إعلانات Meta</h2>
+        <p>بموافقتك، نستخدم Meta Pixel لقياس الزيارات ونقرات التواصل وعرض إعلانات الأزل لك على فيسبوك وإنستغرام. اختيارك لا يؤثر على تصفّح الموقع. <a href="privacy.html">تفاصيل الخصوصية</a></p>
+        <p id="meta-consent-status" class="meta-consent-status" aria-live="polite"></p>
+      </div>
+      <div class="meta-consent-actions">
+        <button type="button" data-meta-consent="granted">أوافق</button>
+        <button type="button" data-meta-consent="denied">لا أوافق</button>
+      </div>
+    </section>
   </body>
 </html>

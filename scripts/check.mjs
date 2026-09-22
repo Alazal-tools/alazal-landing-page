@@ -70,6 +70,11 @@ assert(
   "Runtime animation dependencies must be self-hosted",
 );
 const model = await readFile("public/brand-scene.js");
+const analytics = await readFile('public/analytics.js');
+assert(gzipSync(analytics).length < 5 * 1024, 'Local analytics integration exceeds 5 KB gzip');
+assert(!/connect\.facebook\.net|facebook\.com\/tr\?/.test(html), 'Meta must not load before advertising consent');
+await access('analytics-config.js');
+await access('privacy.html');
 assert(gzipSync(await readFile('public/arrival.js')).length < 12 * 1024, 'Directions bundle exceeds the 12 KB gzip budget');
 // The static district must not return to thousands of live SVG DOM nodes.
 const mapBase = await readFile('public/district-base.svg', 'utf8');

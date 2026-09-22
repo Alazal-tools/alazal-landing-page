@@ -5,7 +5,8 @@ import { readFileSync } from "node:fs";
 import './render-arrival.mjs';
 
 await build({
-  entryPoints: ["src/brand-scene.js", "src/arrival.js"],
+  entryPoints: ["src/brand-scene.js", "src/arrival.js", "src/analytics.js"],
+  external: ['../analytics-config.js'],
   outdir: "public",
   bundle: true,
   minify: true,

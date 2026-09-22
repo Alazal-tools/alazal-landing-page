@@ -44,6 +44,10 @@ The brand-coloured district model uses actual Kadhimiya streets, blocks, park an
 
 The illustrated entrance insets remain on desktop and are omitted on phones to keep the entire map unobstructed. The written boys' address specifies the entrance to the left of Harir Clinics when facing it. All six group entities have complete contact disclosures below. See [LOCATION-SOURCES.md](LOCATION-SOURCES.md) for geographic verification, routing limitations and data maintenance.
 
+## Meta advertising measurement
+
+Meta Pixel integration is prepared, with live delivery disabled until the owner supplies the numeric ID in `analytics-config.js`. See [META-PIXEL-SETUP.md](META-PIXEL-SETUP.md) for creation, activation, Test Events, event meanings and retargeting audiences. The independent small module loads Meta only after advertising consent on approved production domains; it does not block story initialization. It includes a local dry run and a visitor-facing privacy notice. Existing Google Analytics and Clarity remain separate.
+
 ## Performance
 
 The initial head script chooses the motion/reduced-motion layout before paint; CSS reserves the complete story height before the module loads. The fixed-size `public/district-base.svg` contains the original streets, blocks, river and park geometry, unchanged, and loads lazily. Route overlays, labels, pins and zoom remain interactive. The build regenerates both layers from the same district data and colours.
