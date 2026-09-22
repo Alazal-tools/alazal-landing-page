@@ -1,29 +1,29 @@
-# Alazal: the point carries the story
+# Alazal: one point becomes a world
 
-Updated September 22, 2026. Keep DIN Next LT Arabic, navy #100051, teal #06ffac and the original logo shape/proportions.
+Updated September 22, 2026. Keep the original DIN Next LT Arabic, navy #100051, teal #06ffac and brand silhouette.
+
+## The central idea
+
+The dot is the material from which the story is built. It moves once from the hero logo to a fixed stage; it does not travel around photographs. Every scene changes what the dot physically is.
+
+- **2010 — a page opens:** the extruded brand shape stretches into a book cover and opens on its spine to reveal the real library.
+- **2012 — a page becomes a room:** the same material expands into a 3D room frame, including a recessed back wall, revealing the actual classroom.
+- **2020 / 2024 — ambition expands:** one shape becomes two doors. They open on their outside hinges onto the two school entrances. The copy carries “Beyond Education / أبعد من التعليم”.
+- **2026 — the effect spreads:** the solid breaks into a large cloud of branded particles. The cloud assembles into a 9:16 screen around the actual Alazal platform screenshot.
+- **Today — the same identity:** the dot gathers and settles into the exact final logo position, then scrolls away with that logo.
+
+Each transformation has a construction phase, a quiet hold and a return to the original seed. This makes the continuity legible in either scroll direction. Headline copy stays beside the transformation; text never emerges from the dot.
+
+## Interaction and fallbacks
+
+Scrolling is native. The five date buttons navigate directly to completed scenes. There is no cursor chasing, arbitrary flight path, toss interaction or visible scroll instruction. Mobile uses the same transformations inside a stage sized to the available width and height. Reduced motion presents all five scenes as normal document content. The self-hosted renderer runs only when the geometry/material pose changes, with pixel density capped at 1.5.
 
 ## Page sequence
 
-1. The original logo with its dot extruded in 3D at the exact original position and rotation.
-2. Five brief story scenes: library/publishing (2010), institute (2012), schools (2020/2024), actual platform interface (2026), Alazal today.
-3. Registration: first choose school or institute, then view only the relevant, individually separated forms. There are two school forms and three institute forms, imported from the existing Estmara catalogue. Each opens its original Google Form; no student data is collected by the landing page itself.
-4. The existing interactive Kadhimiya location guide, with destinations, origins, directions, addresses and contacts intact.
-5. A small privacy/settings disclosure.
+Hero → story → school/institute chooser → relevant registration forms → existing interactive Kadhimiya guide → compact privacy/settings disclosure.
 
-The old manifesto, everyday gallery, FAQ, large contact directory and footer are removed. Schools express “Beyond Education / أبعد من التعليم”. There is no teacher directory or portrait gallery.
-
-## Motion
-
-The smaller point follows one purposeful action through each scene, then pauses. It preserves the original gentle rotation poses and strong particle scatter only at the schools-to-platform transition. The platform screen keeps an exact 9:16 aspect ratio. The book opens, classroom strips assemble, school portals open, and the actual platform screen tilts while the point passes it. During transitions the same object travels to the next composition, then returns to the logo and stays there as the story scrolls away.
-
-Copy stays still; movement belongs to the point and physical scene elements. Selecting the point advances to the next scene. Decorative trails, free tosses, cursor tilt and repeated full spins are removed. There is no perpetual idle render loop or scroll hijacking. Phones use the same story/controller with compositions sized to the available height. System reduced-motion preferences expose the scenes in ordinary document flow. CSS retains the original brand shape if WebGL fails.
-
-No visible “follow the point”, scroll/touch instructions, skip-story link or reading-mode button. Date navigation remains for direct access. Registration links and details work without JavaScript.
-
-## Content and evidence
-
-Only supplied dates, existing registration details, actual photos and the platform screenshot are used. Do not invent fees, outcomes, guarantees or schedules. Registration form clicks indicate intent, not completed enrollment; the custom Pixel event is RegistrationFormOpen.
+Five forms retain their original Google Forms destinations. RegistrationFormOpen measures opening a form, not completed enrollment. No teacher directory, manifesto, everyday gallery, FAQ or large contact directory is included. The location geometry, origin choices, addresses and facility contacts are unchanged.
 
 ## References
 
-The user's original [Landing Page Design skill](https://github.com/elayadesign/ai-design-skills/blob/main/skills/landing-page-design/SKILL.md), [ThreeUI paper compositions](https://threeui.com/three-js/3d-paper) and [Canvas UI](https://canvasui.dev/components) inform the bespoke implementation. The existing identity and current user direction take precedence. No runtime component dependency was added from these references.
+The user's original [Landing Page Design skill](https://github.com/elayadesign/ai-design-skills/blob/main/skills/landing-page-design/SKILL.md), [ThreeUI](https://threeui.com/three-js/3d-paper) and [Canvas UI](https://canvasui.dev/components) informed the custom physical compositions. Current user direction and the original identity take precedence. No runtime component was copied from these references.

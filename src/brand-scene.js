@@ -16,8 +16,10 @@ import {
   Float32BufferAttribute,
   ShaderMaterial,
   Points,
+  BoxGeometry,
 } from "three";
 import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import {range, mix, digitalState} from './story-motion.js';
 
 // This is the original Alazal dot extruded, not a substitute symbol.
 export function createBrandScene(mount) {
@@ -83,10 +85,35 @@ export function createBrandScene(mount) {
     transparent: true,
   });
   const object = new Group();
+  const hinge = new Group();
   const solid = new Mesh(geometry, [face, edge]);
-  object.add(solid);
-  // Original, deterministic particle reassembly at the digital story stop.
-  // The shader keeps the same two rounded corners as the original dot.
+  hinge.add(solid);
+  object.add(hinge);
+  // The point becomes the scenery: a hinged cover, a room frame, two doors.
+  const structureFace = face.clone(), structureEdge = edge.clone();
+  const structureMaterials = [structureFace, structureEdge];
+  const frame = new Group(), doors = new Group();
+  const barGeometry = new BoxGeometry(1,1,1);
+  for (const [x,y,w,h] of [[0,1.05,3.12,.12],[0,-1.05,3.12,.12],[-1.5,0,.12,2.1],[1.5,0,.12,2.1]]) {
+    const bar = new Mesh(barGeometry,structureFace);
+    bar.position.set(x,y,0); bar.scale.set(w,h,.17); frame.add(bar);
+  }
+  // A recessed back wall and four joining edges turn the frame into a room.
+  for (const [x,y,w,h] of [[0,.91,2.72,.06],[0,-.91,2.72,.06],[-1.33,0,.06,1.82],[1.33,0,.06,1.82]]) {
+    const bar=new Mesh(barGeometry,structureEdge);
+    bar.position.set(x,y,-.7);bar.scale.set(w,h,.08);frame.add(bar);
+  }
+  for(const x of [-1,1])for(const y of [-1,1]) {
+    const beam=new Mesh(barGeometry,structureEdge);
+    beam.position.set(x*1.415,y*.98,-.35);
+    beam.scale.set(.06,.06,Math.hypot(.17,.14,.7));
+    beam.lookAt(x*1.33,y*.91,-.7);frame.add(beam);
+  }
+  const gates = [-1,1].map(sign => {
+    const gate = new Mesh(geometry,structureMaterials); doors.add(gate); return {gate,sign};
+  });
+  object.add(frame,doors);
+  // One large, deterministic scatter, followed by a real 9:16 screen assembly.
   const positions = [];
   for (let x = -0.96; x <= 0.96; x += 0.1) {
     for (let y = -0.96; y <= 0.96; y += 0.1) {
@@ -100,22 +127,37 @@ export function createBrandScene(mount) {
     "position",
     new Float32BufferAttribute(positions, 3),
   );
+  const burst=[], screen=[];
+  const count=positions.length/3, halfW=.9405, halfH=1.672;
+  const perimeter=4*(halfW+halfH);
+  for(let i=0;i<count;i++) {
+    const angle=i*2.3999632297;
+    const radius=.25+Math.sqrt((i+.5)/count)*1.35;
+    burst.push(Math.cos(angle)*radius,Math.sin(angle)*radius,Math.sin(i*1.71)*.85);
+    let d=i/count*perimeter;
+    if(d<2*halfW) screen.push(-halfW+d,halfH,0);
+    else if((d-=2*halfW)<2*halfH) screen.push(halfW,halfH-d,0);
+    else if((d-=2*halfH)<2*halfW) screen.push(halfW-d,-halfH,0);
+    else {d-=2*halfW;screen.push(-halfW,-halfH+d,0);}
+  }
+  particlesGeometry.setAttribute('burst',new Float32BufferAttribute(burst,3));
+  particlesGeometry.setAttribute('screen',new Float32BufferAttribute(screen,3));
   const particlesMaterial = new ShaderMaterial({
     transparent: true,
     depthWrite: false,
     uniforms: {
       amount: { value: 0 },
+      assembly: { value: 0 },
+      opacity: { value: 0 },
       density: { value: Math.min(devicePixelRatio, 1.5) },
     },
-    vertexShader: `uniform float amount; uniform float density; varying float alpha;
+    vertexShader: `uniform float amount; uniform float assembly; uniform float opacity;
+      uniform float density; attribute vec3 burst; attribute vec3 screen; varying float alpha;
       void main() {
-        vec3 p = position;
-        float angle = p.x * 5.7 + p.y * 9.3;
-        p.xy += vec2(sin(angle), cos(angle * 1.3)) * amount * .38;
-        p.z += sin(angle * 2.1) * amount * .6;
+        vec3 p = mix(mix(position, burst, amount), screen, assembly);
         gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
-        gl_PointSize = (4.0 + amount * 2.0) * density;
-        alpha = min(1.0, amount * 2.0);
+        gl_PointSize = (3.5 + amount * 1.5 - assembly) * density;
+        alpha = opacity;
       }`,
     fragmentShader: `varying float alpha;
       void main() {
@@ -143,10 +185,43 @@ export function createBrandScene(mount) {
   function render(pose = lastPose) {
     lastPose = pose;
     object.rotation.set(pose.x, pose.y, pose.z);
-    const scatter = pose.scatter || 0;
-    face.opacity = edge.opacity = 1 - scatter;
-    particles.visible = scatter > 0.005;
-    particlesMaterial.uniforms.amount.value = scatter;
+    const b=pose.build||0;
+    hinge.position.set(0,0,0);hinge.rotation.set(0,0,0);
+    solid.position.set(0,0,0);solid.scale.set(1,1,1);
+    face.opacity=edge.opacity=1;
+    frame.visible=doors.visible=particles.visible=false;
+    structureFace.opacity=structureEdge.opacity=1;
+    if(pose.chapter===0) {
+      const grow=range(b,0,.30), open=range(b,.25,.94);
+      solid.scale.set(mix(1,.72,grow),mix(1,1.33,grow),mix(1,.22,grow));
+      hinge.position.x=-.774*grow;solid.position.x=.774*grow;
+      hinge.rotation.y=-open*2.1;
+    } else if(pose.chapter===1) {
+      const grow=range(b,.06,.75);
+      frame.visible=b>.05;frame.scale.setScalar(mix(.12,1,grow));
+      structureFace.opacity=range(b,.12,.36);
+      solid.scale.set(mix(1,1.45,range(b,0,.4)),mix(1,.98,grow),mix(1,.25,grow));
+      face.opacity=edge.opacity=1-range(b,.12,.42);
+    } else if(pose.chapter===2) {
+      const split=range(b,.08,.46), open=range(b,.46,.96);
+      doors.visible=b>.06;structureFace.opacity=structureEdge.opacity=range(b,.06,.28);
+      face.opacity=edge.opacity=1-range(b,.06,.28);
+      gates.forEach(({gate,sign})=>{
+        // Open on each outside hinge, keeping the entrance itself unobstructed.
+        const angle=open*1.42;
+        gate.position.set(sign*(.89*split+.688*(1-Math.cos(angle))),0,Math.sin(angle)*.688);
+        gate.scale.set(mix(.55,.64,split),mix(1,1.25,split),.23);
+        gate.rotation.y=sign*angle;
+      });
+    } else if(pose.chapter===3) {
+      const digital=digitalState(b);
+      face.opacity=edge.opacity=digital.solid;
+      particles.visible=b>.06;
+      particlesMaterial.uniforms.amount.value=digital.scatter;
+      particlesMaterial.uniforms.assembly.value=digital.assemble;
+      particlesMaterial.uniforms.opacity.value=(1-digital.solid)*(1-digital.assemble*.62);
+    }
+    solid.visible=face.opacity>.001;
     renderer.render(scene, camera);
   }
   render();
@@ -160,6 +235,8 @@ export function createBrandScene(mount) {
         onRestored,
       );
       geometry.dispose();
+      barGeometry.dispose();
+      structureFace.dispose();structureEdge.dispose();
       face.dispose();
       edge.dispose();
       particlesGeometry.dispose();

@@ -530,295 +530,6 @@ select:focus-visible {
   font-size: 10px;
   letter-spacing: 1px;
 }
-.story-dot-anchor {
-  position: absolute;
-  width: 76px;
-  aspect-ratio: 1;
-  pointer-events: none;
-}
-.book-scene #chapter-anchor-0 {
-  top: 24px;
-  left: 14%;
-}
-.book-stack {
-  position: absolute;
-  width: 60%;
-  height: 88%;
-  top: 4%;
-  left: 22%;
-  transform-style: preserve-3d;
-  transform: rotateX(calc(7deg + var(--exit) * 14deg))
-    rotateY(calc(-16deg - var(--exit) * 55deg))
-    rotateZ(calc(-8deg - var(--exit) * 12deg))
-    translateY(calc(var(--enter) * 100px - var(--exit) * 80px));
-}
-.book-leaf {
-  position: absolute;
-  inset: 0;
-  transform-origin: 95% 50%;
-  box-shadow: -12px 20px 24px #00000035;
-  border-radius: 4px 12px 12px 4px;
-  overflow: hidden;
-}
-.leaf-back {
-  background: var(--teal);
-  color: var(--navy);
-  transform: translateZ(-24px) rotateY(calc(-31deg + var(--enter) * 34deg))
-    rotateZ(-8deg);
-  padding: 40px 24px;
-}
-.leaf-back > span {
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1.3;
-}
-.leaf-middle {
-  background: #87d9bd;
-  color: var(--navy);
-  padding: 40px 24px;
-  transform: translateZ(-12px) rotateY(calc(-16deg + var(--enter) * 26deg))
-    rotateZ(-4deg);
-}
-.leaf-middle > span {
-  font-size: 36px;
-  font-weight: 700;
-}
-.leaf-middle small {
-  font-size: 14px;
-  display: block;
-}
-.leaf-middle i {
-  display: block;
-  width: 75%;
-  height: 30%;
-  border-top: 1px solid #10005160;
-  border-bottom: 1px solid #10005160;
-  margin-top: 48px;
-}
-.leaf-front {
-  transform: rotateY(calc(var(--enter) * 40deg - var(--exit) * 45deg));
-  background: var(--navy);
-}
-.leaf-front img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.leaf-front figcaption {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--navy);
-  color: var(--teal);
-  font-size: 12px;
-  padding: 12px 16px;
-}
-.class-composition {
-  position: absolute;
-  inset: 48px 0 24px;
-  transform: rotate(calc(-3deg + var(--enter) * 8deg - var(--exit) * 8deg))
-    scale(calc(1 - var(--enter) * 0.12 + var(--exit) * 0.1));
-}
-.class-slices {
-  display: flex;
-  direction: ltr;
-  width: 100%;
-  height: 100%;
-  perspective: 900px;
-  gap: 3px;
-}
-.class-slice {
-  flex: 1;
-  background-image: url("public/images/campus.webp");
-  background-size: 300% 100%;
-  background-repeat: no-repeat;
-  position: relative;
-  transform-origin: center;
-}
-.slice-one {
-  background-position: 0% 50%;
-  transform: translate3d(0, calc(var(--enter) * 130px - var(--exit) * 150px), 0)
-    rotateY(calc(var(--enter) * -55deg));
-}
-.slice-two {
-  background-position: 50% 50%;
-  transform: translate3d(0, calc(var(--enter) * -90px + var(--exit) * 70px), 0)
-    rotateY(calc(var(--enter) * 45deg));
-}
-.slice-three {
-  background-position: 100% 50%;
-  transform: translate3d(0, calc(var(--enter) * 170px - var(--exit) * 100px), 0)
-    rotateY(calc(var(--enter) * -45deg));
-}
-.class-label {
-  position: absolute;
-  bottom: 24px;
-  right: -16px;
-  background: var(--teal);
-  color: var(--navy);
-  padding: 12px 24px;
-  font-size: 24px;
-  font-weight: 700;
-  transform: rotate(3deg);
-}
-.class-rule {
-  position: absolute;
-  inset: -24px 24px;
-  border: 1px solid #06ffac66;
-  z-index: -1;
-  transform: rotate(6deg);
-}
-.class-scene #chapter-anchor-1 {
-  bottom: 0;
-  left: -16px;
-}
-.school-portals {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  gap: 24px;
-  align-items: center;
-  direction: rtl;
-  perspective: 900px;
-}
-.school-portal {
-  position: relative;
-  width: 50%;
-  height: 86%;
-  overflow: hidden;
-  background: var(--navy);
-  border-radius: 96px 96px 0 0;
-  transform-origin: center bottom;
-}
-.school-portal img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.78;
-}
-.portal-one {
-  transform: translate3d(
-      calc(var(--enter) * -80px - var(--exit) * 60px),
-      calc(var(--enter) * 130px - var(--exit) * 130px),
-      0
-    )
-    rotateY(calc(var(--enter) * -35deg));
-  align-self: flex-start;
-}
-.portal-two {
-  transform: translate3d(
-      calc(var(--enter) * 80px + var(--exit) * 60px),
-      calc(var(--enter) * -130px + var(--exit) * 130px),
-      0
-    )
-    rotateY(calc(var(--enter) * 35deg));
-  align-self: flex-end;
-}
-.school-portal figcaption {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--navy);
-  padding: 16px 24px;
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-}
-.school-portal b {
-  font-size: 30px;
-  color: var(--teal);
-}
-.school-portal figcaption span {
-  font-size: 14px;
-}
-.school-scene #chapter-anchor-2 {
-  left: 43%;
-  top: 39%;
-  width: 70px;
-}
-.digital-grid {
-  position: absolute;
-  inset: 12% -6%;
-  background-image:
-    linear-gradient(#06ffac12 1px, transparent 1px),
-    linear-gradient(90deg, #06ffac12 1px, transparent 1px);
-  background-size: 40px 40px;
-  transform: rotateX(60deg) rotateZ(-20deg) scale(1.25);
-  mask-image: radial-gradient(ellipse, #000, transparent 70%);
-}
-.digital-word {
-  position: absolute;
-  right: 0;
-  left: 0;
-  top: 24%;
-  font-size: 128px;
-  font-weight: 700;
-  color: transparent;
-  -webkit-text-stroke: 1px #06ffac4d;
-  text-align: center;
-  transform: translateX(calc(var(--enter) * -120px + var(--exit) * 160px));
-}
-.phone-wrap {
-  position: absolute;
-  top: 0;
-  left: 30%;
-  width: 42%;
-  height: 100%;
-  perspective: 1000px;
-  transform: translate3d(
-    calc(var(--enter) * 100px),
-    calc(var(--enter) * 180px - var(--exit) * 150px),
-    0
-  );
-}
-.phone {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background: var(--navy);
-  border: 6px solid #534185;
-  border-radius: 32px;
-  overflow: hidden;
-  box-shadow:
-    15px 18px 0 #070023,
-    24px 26px 28px #00000050;
-  transform: rotateY(calc(-18deg + var(--enter) * 100deg + var(--exit) * 60deg))
-    rotateX(calc(8deg + var(--enter) * 20deg))
-    rotateZ(calc(-8deg + var(--enter) * 15deg));
-  transform-style: preserve-3d;
-}
-.phone img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: top;
-}
-.phone-camera {
-  position: absolute;
-  top: 6px;
-  left: 35%;
-  right: 35%;
-  height: 12px;
-  background: #100051;
-  border-radius: 8px;
-  z-index: 1;
-}
-.digital-caption {
-  position: absolute;
-  bottom: 12%;
-  right: -4%;
-  font-size: 18px;
-  color: var(--teal);
-  line-height: 1.4;
-  transform: rotate(-8deg);
-}
-.digital-scene #chapter-anchor-3 {
-  left: 15%;
-  top: 13%;
-  width: 76px;
-}
 .story-lockup {
   display: flex;
   align-items: center;
@@ -975,50 +686,39 @@ select:focus-visible {
   margin-top: 8px;
 }
 
-/* The point acts on the scenery. Copy stays anchored while objects respond. */
-.brand-object { pointer-events:auto; padding:0; border:0; border-radius:40% 0; touch-action:pan-y; cursor:pointer; }
-.brand-object:focus-visible { outline:3px solid var(--teal); outline-offset:-72px; }
-.brand-object:disabled { cursor:default; }
-.brand-object canvas,.object-fallback { pointer-events:none; }
-.story-panel { --phase:1; }
+/* One point becomes each institution. Its physical material tells the story. */
+.brand-object { pointer-events:none; }
+.story-panel { --build:1; --reveal:1; }
+.motion-story .story-panel { --build:0; --reveal:0; }
 .story-copy h2 { font-size:clamp(40px,4.3vw,68px); line-height:1.22; }
 .story-copy > p:not(.eyebrow) { max-width:385px; font-size:18px; }
 .motion-story .story-copy { transform:none; }
-.motion-story .scene-art { height:min(52svh,470px); }
-.motion-story .scene-year { top:-5%; color:#ffffff06; transform:translateY(calc(var(--phase)*-28px)); }
-.book-stack { width:55%; height:83%; left:29%; top:8%; transform:rotateX(8deg) rotateY(calc(-13deg + var(--phase)*15deg)) rotateZ(calc(-5deg)); }
-.leaf-back { transform:translateX(calc(var(--phase)*-76px)) translateZ(-24px) rotateY(calc(var(--phase)*-20deg)) rotateZ(calc(var(--phase)*-13deg)); }
-.leaf-middle { transform:translateX(calc(var(--phase)*-30px)) translateZ(-12px) rotateY(calc(var(--phase)*-14deg)) rotateZ(calc(var(--phase)*-5deg)); }
-.leaf-front { transform:rotateY(calc(var(--phase)*-34deg)); }
-.leaf-back > span { font-size:clamp(26px,3vw,42px); }
-.class-composition { inset:14% 6% 11%; transform:rotate(calc(-4deg + var(--phase)*4deg)); }
-.slice-one { --part:clamp(0,calc(var(--phase)*3),1); transform:translateY(calc((1 - var(--part))*32px)) rotateY(calc((1 - var(--part))*-30deg)); }
-.slice-two { --part:clamp(0,calc((var(--phase) - .25)*3),1); transform:translateY(calc((1 - var(--part))*-32px)) rotateY(calc((1 - var(--part))*30deg)); }
-.slice-three { --part:clamp(0,calc((var(--phase) - .55)*2.23),1); transform:translateY(calc((1 - var(--part))*32px)) rotateY(calc((1 - var(--part))*-30deg)); }
-.class-label { right:-10px; bottom:18px; font-size:20px; padding:10px 16px; transform:rotate(calc(3deg - var(--phase)*3deg)); }
-.class-rule { transform:rotate(calc(8deg - var(--phase)*8deg)); border-color:#06ffac55; }
-.school-portals { inset:11% 7% 7%; gap:18px; z-index:1; }
-.school-portal { height:86%; border-radius:70px 70px 2px 2px; }
-.school-portal img { opacity:.9; }
-.portal-one { transform:translate(calc(var(--phase)*14px),calc((1 - var(--phase))*24px)) rotateY(calc((1 - var(--phase))*-22deg)); }
-.portal-two { transform:translate(calc(var(--phase)*-14px),calc((1 - var(--phase))*-24px)) rotateY(calc((1 - var(--phase))*22deg)); }
-.school-portal figcaption { padding:12px; gap:8px; }
-.school-portal b { font-size:23px; }
-.school-portal figcaption span { font-size:13px; }
-.beyond-frame { position:absolute; inset:16% 17%; border:1px solid #06ffac88; transform:scale(calc(.78 + var(--phase)*.55)) rotate(calc(8deg - var(--phase)*8deg)); }
-.beyond-frame > span { position:absolute; left:0; right:0; top:-25px; color:var(--teal); font-size:10px; letter-spacing:2px; text-align:center; }
-.phone-wrap { top:3%; height:92%; width:auto; aspect-ratio:9 / 16; left:50%; transform:translateX(-50%); }
-.phone { box-sizing:content-box; border-width:4px; border-radius:23px; transform:rotateY(calc(-24deg + var(--phase)*31deg)) rotateX(6deg) rotateZ(calc(-8deg + var(--phase)*10deg)); }
-.phone .platform-screen { width:100%; height:100%; object-fit:cover; object-position:top; }
-.phone-camera { height:8px; top:5px; }
-.digital-word { font-size:clamp(64px,8vw,120px); transform:translateX(calc(20px - var(--phase)*40px)); }
-.digital-caption { right:0; bottom:10%; font-size:15px; }
-.digital-grid { transform:rotateX(65deg) rotateZ(calc(-20deg + var(--phase)*10deg)); }
-.return-lines { transform:none; opacity:.16; }
-.return-lines i { transform:rotate(20deg); }
+.motion-story .scene-art { height:min(54svh,480px); }
+.motion-story .scene-year { top:-5%; color:#ffffff06; transform:none; }
+.narrative-art { container-type:size; }
+.narrative-stage { position:absolute; left:50%; top:50%; width:min(96cqw,96cqh); aspect-ratio:1; transform:translate(-50%,-50%); }
+.narrative-stage img { width:100%; height:100%; object-fit:cover; }
+.narrative-reveal { opacity:var(--reveal); }
+.book-reveal,.book-paper { position:absolute; left:29.65%; top:12.4%; width:40.7%; height:75.2%; }
+.book-paper { background:#d5f7eb; box-shadow:3px 2px 0 #779c90,6px 4px 0 #d5f7eb; opacity:var(--reveal); }
+.book-reveal { border:2px solid #e0fff4; }
+.classroom-reveal { position:absolute; inset:26% 14.75%; overflow:hidden; transform:scale(calc(.3 + var(--reveal)*.7)); }
+.classroom-reveal img { object-position:center; }
+.school-reveal { position:absolute; top:14.65%; width:34%; height:70.7%; }
+.school-girls { left:56.4%; }
+.school-boys { left:9.6%; }
+.school-reveal img { border-radius:34% 0 34% 0; }
+.school-reveal figcaption { position:absolute; top:calc(100% + 10px); width:100%; display:flex; align-items:baseline; justify-content:center; gap:8px; white-space:nowrap; }
+.school-reveal figcaption b { color:var(--teal); font-size:19px; }
+.school-reveal figcaption span { color:var(--muted); font-size:12px; }
+.narrative-stage .phone-wrap { position:absolute; top:6%; left:50%; height:88%; width:auto; aspect-ratio:9 / 16; perspective:none; transform:translateX(-50%); }
+.narrative-stage .phone { position:relative; width:100%; height:100%; overflow:hidden; background:var(--navy); box-sizing:content-box; border:2px solid #06ffac77; border-radius:16px; transform:none; box-shadow:5px 6px 0 #060020; }
+.narrative-stage .phone .platform-screen { width:100%; height:100%; object-fit:cover; object-position:top; }
+.motion-story .story-lockup .story-logo,.motion-story .story-lockup > p { opacity:var(--reveal); }
 .story-logo { width:52%; }
 .story-lockup > p { font-size:20px; }
 section:focus,main:focus { outline:none; }
+@media(max-width:760px) { .school-reveal figcaption { flex-direction:column; align-items:center; gap:0; top:calc(100% + 5px); } .school-reveal figcaption b { font-size:16px; } .school-reveal figcaption span { font-size:10px; } }
 
 /* The story lands directly at the registration choices. */
 .registration { position:relative; padding-block:110px 55px; background:var(--navy); border-top:1px solid #06ffac45; }
@@ -1086,7 +786,6 @@ section:focus,main:focus { outline:none; }
   .hero-art { height:430px; }
   .motion-story .story-panel { gap:32px; }
   .story-copy h2 { font-size:46px; }
-  .school-portal figcaption { flex-direction:column; gap:0; padding:8px 12px; }
   .registration-heading { gap:32px; }
   .registration-group { gap:36px; grid-template-columns:.65fr 1.5fr; }
   .registration-form { grid-template-columns:22px minmax(0,1fr); gap:12px; }
@@ -1134,27 +833,13 @@ section:focus,main:focus { outline:none; }
   .scene-year { font-size:130px; top:0; letter-spacing:-5px; }
   .scene-art { width:min(100%,360px); height:310px; justify-self:center; }
   .motion-story .story-stage { height:100svh; min-height:0; }
-  .motion-story .story-panel { inset:70px var(--gutter) 102px; padding:0; gap:24px; grid-template-rows:auto minmax(0,1fr); align-content:start; }
+  .motion-story .story-panel { inset:70px var(--gutter) 102px; padding:0; gap:24px; grid-template-rows:clamp(172px,30svh,220px) minmax(0,1fr); align-content:start; }
+  .motion-story .story-copy { align-self:start; }
   .motion-story .story-copy h2 { font-size:clamp(29px,5.4svh,40px); }
   .motion-story .scene-art { height:100%; max-height:370px; min-height:0; align-self:center; }
   .motion-story .scene-year { top:18%; left:0; font-size:145px; }
   .scene-caption { bottom:-17px; font-size:9px; gap:8px; }
   .scene-caption > span { font-size:7px; letter-spacing:.5px; }
-  .leaf-back,.leaf-middle { padding:20px 12px; }
-  .leaf-middle > span { font-size:27px; }
-  .leaf-middle small { font-size:10px; }
-  .leaf-middle i { margin-top:20px; }
-  .leaf-front figcaption { font-size:10px; padding:8px; }
-  .leaf-back { transform:translateX(calc(var(--phase)*-50px)) translateZ(-24px) rotateY(calc(var(--phase)*-20deg)) rotateZ(calc(var(--phase)*-13deg)); }
-  .class-label { font-size:15px; padding:8px 12px; bottom:10px; }
-  .school-portals { gap:15px; }
-  .school-portal { border-radius:55px 55px 0 0; }
-  .school-portal b { font-size:21px; }
-  .school-portal figcaption span { font-size:11px; }
-  .digital-word { font-size:82px; }
-  .digital-caption { font-size:11px; right:-3%; }
-  .phone { border-width:3px; border-radius:18px; box-shadow:8px 10px 0 #070023,12px 14px 20px #0005; }
-  .beyond-frame > span { font-size:8px; letter-spacing:1px; top:-22px; }
   .story-lockup { gap:15px; }
   .story-logo { width:52%; max-width:210px; }
   .story-lockup > p { font-size:17px; }
@@ -1218,10 +903,6 @@ section:focus,main:focus { outline:none; }
   .story-lockup { gap:8px; }
   .story-logo { width:auto; height:70%; }
   .story-logo img { height:100%; width:auto; }
-  .school-portal b { font-size:17px; }
-  .school-portal figcaption { padding:4px 8px; }
-  .school-portal figcaption span { font-size:10px; }
-  .class-label { font-size:13px; padding:5px 9px; }
 }
 @media (prefers-reduced-motion:reduce) {
   *,*::before,*::after { animation:none!important; transition:none!important; scroll-behavior:auto!important; }
