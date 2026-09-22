@@ -33,6 +33,8 @@ Also test **إيقاف قياس Meta** in the footer: new events stop. Reload wh
 
 If you see no events, check the ID, correct dataset and production domain first; then the footer tracking setting, browser blockers and Events Manager Diagnostics. Domain restrictions currently allow `alazalgroup.com` and `www.alazalgroup.com`. Other preview hosts deliberately do not send Meta traffic.
 
+**Edge troubleshooting:** the live test on September 22, 2026 reproduced `ERR_BLOCKED_BY_CLIENT` for `https://connect.facebook.net/en_US/fbevents.js`, alongside “Tracking Prevention blocked a Script resource.” Edge's site-information panel showed **Tracking prevention for this site (Strict)**. In that state the browser prevents the Pixel library from loading. For an owner-controlled test, the owner can temporarily turn off tracking prevention for **this site only**, reload, and check Meta Test events again. Restore the original setting after testing. Do not infer successful delivery from a resource timing entry alone; inspect the Network result and confirm receipt in Meta.
+
 For a direct browser report, open [the live Pixel diagnostic view](https://alazalgroup.com/?pixel_test=1). It shows the configured ID, saved tracking preference, Global Privacy Control, SDK load state, events passed to the SDK and observed Meta network requests. Use **Copy report** to share the result with the maintainer. This mode observes normal events and does not override an opt-out or generate extra events. A completed request or SDK event count is not proof of receipt in Events Manager; cross-origin HTTP statuses may be hidden by the browser. The view is only loaded with `pixel_test=1` and is absent from normal visits.
 
 ## 3. Create retargeting audiences
