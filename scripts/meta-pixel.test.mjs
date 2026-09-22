@@ -1,6 +1,16 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createMetaPixel, loadMetaLibrary, isMetaTrackingEnabled } from '../src/meta-pixel.js';
+import { summarizeMetaRequest } from '../src/pixel-diagnostics.js';
+
+test('diagnostics report Meta request evidence without visitor identifiers or false receipt claims', () => {
+  const id = '123456789012345';
+  const request = summarizeMetaRequest({ name: `https://www.facebook.com/tr/?id=${id}&ev=PageView&fbp=private&dl=https://example.com/private`, responseStatus: 0, responseEnd: 123 }, id);
+  assert.deepEqual(request, { event: 'PageView', httpStatus: 'not exposed by browser', completed: true });
+  assert.equal(summarizeMetaRequest({name:'https://example.com/tr/?ev=PageView'}, id), null);
+  assert.equal(summarizeMetaRequest({name:'https://www.facebook.com/tr/?id=999999999999&ev=PageView'}, id), null);
+  assert.equal(summarizeMetaRequest({name:'https://connect.facebook.net/en_US/fbevents.js'}, id), null);
+});
 
 test('automatic tracking preserves prior opt-outs, privacy signals and production limits', () => {
   assert.equal(isMetaTrackingEnabled({ eligible: true, preference: null }), true);
@@ -107,6 +117,8 @@ test('SDK failure cannot break navigation or leak queued events', async () => {
   pixel.setConsent(true);
   pixel.track('Contact',{facility:'institute'});
   await new Promise(resolve=>setImmediate(resolve));
+  assert.equal(pixel.status().sdk, 'failed');
+  assert.equal(pixel.status().pageViewQueued, false);
   pixel.setConsent(false);
 });
 test('local dry run records allowed events without loading a Meta script', () => {

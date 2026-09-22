@@ -3,6 +3,7 @@ import { createMetaPixel, loadMetaLibrary, isMetaTrackingEnabled } from './meta-
 
 const local = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
 const debug = local && new URLSearchParams(location.search).get('meta_debug') === '1';
+const diagnostics = new URLSearchParams(location.search).get('pixel_test') === '1';
 const configured = /^\d{10,20}$/.test(metaPixelId) && metaProductionHosts.includes(location.hostname);
 const eligible = configured || debug;
 const key = 'alazal-meta-consent-v1';
@@ -13,9 +14,10 @@ const status = document.querySelector('#meta-consent-status');
 let granted = false;
 const events = [];
 const pixel = createMetaPixel({ pixelId: metaPixelId, debug, load: loadMetaLibrary, onEvent(event) {
-  if (!debug) return;
+  if (!debug && !diagnostics) return;
   events.push(event);
   if (events.length > 100) events.shift();
+  if (!debug) return;
   let output = document.querySelector('#meta-debug-output');
   if (!output) {
     output = document.createElement('output');
@@ -107,5 +109,13 @@ if (eligible) {
 
 window.alazalMeta = Object.freeze({
   status: () => ({ configured, debug, enabled: granted, preference: readConsent() || 'default', globalPrivacyControl: Boolean(navigator.globalPrivacyControl) }),
+  diagnostics: () => ({ pixelId: metaPixelId, host: location.hostname, ...window.alazalMeta.status(), ...pixel.status(), queuedEvents: events.map(({name, data}) => ({name, ...data})) }),
   openSettings: () => { if (eligible) { settings.scrollIntoView({ block: 'center' }); settings.focus({ preventScroll: true }); } },
 });
+
+if (diagnostics) {
+  // A separate troubleshooting view: absent from ordinary visits.
+  const url = new URL('pixel-diagnostics.js', import.meta.url);
+  url.search = new URL(import.meta.url).search;
+  import(url.href).then(({ showPixelDiagnostics }) => showPixelDiagnostics(window.alazalMeta));
+}

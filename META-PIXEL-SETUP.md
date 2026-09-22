@@ -33,6 +33,8 @@ Also test **إيقاف قياس Meta** in the footer: new events stop. Reload wh
 
 If you see no events, check the ID, correct dataset and production domain first; then the footer tracking setting, browser blockers and Events Manager Diagnostics. Domain restrictions currently allow `alazalgroup.com` and `www.alazalgroup.com`. Other preview hosts deliberately do not send Meta traffic.
 
+For a direct browser report, open [the live Pixel diagnostic view](https://alazalgroup.com/?pixel_test=1). It shows the configured ID, saved tracking preference, Global Privacy Control, SDK load state, events passed to the SDK and observed Meta network requests. Use **Copy report** to share the result with the maintainer. This mode observes normal events and does not override an opt-out or generate extra events. A completed request or SDK event count is not proof of receipt in Events Manager; cross-origin HTTP statuses may be hidden by the browser. The view is only loaded with `pixel_test=1` and is absent from normal visits.
+
 ## 3. Create retargeting audiences
 
 In [Meta Ads Manager audiences](https://business.facebook.com/adsmanager/audiences), choose **Create audience → Custom audience → Website**, and select **Alazal Website**. Start with these simple groups once the dataset has received real events:

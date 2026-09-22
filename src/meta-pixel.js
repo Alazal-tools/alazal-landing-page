@@ -12,6 +12,7 @@ export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => 
   let initialized = false;
   let pageViewSent = false;
   let pending = [];
+  let loadError = false;
   const valid = /^\d{10,20}$/.test(pixelId);
 
   function deliver(event) {
@@ -44,10 +45,13 @@ export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => 
         return;
       }
       if (debug || send) return flush();
-      if (!loading) loading = load().then(command => {
+      if (!loading) {
+        loadError = false;
+        loading = load().then(command => {
         send = command;
         flush();
-      }).catch(() => { loading = null; pending = []; });
+        }).catch(() => { loading = null; pending = []; loadError = true; });
+      }
     },
     track(name, data = {}, custom = false) {
       if (!consent || !['ViewContent', 'Contact', 'GetDirections', 'SocialClick'].includes(name)) return;
@@ -61,6 +65,10 @@ export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => 
       if (debug || send) deliver(event);
       else if (pending.length < 30) pending.push(event);
     },
+    status: () => ({
+      sdk: debug ? 'dry-run' : loadError ? 'failed' : send ? 'loaded' : loading ? 'loading' : 'not-loaded',
+      initialized, pageViewQueued: pageViewSent, pendingEvents: pending.length,
+    }),
   };
 }
 
