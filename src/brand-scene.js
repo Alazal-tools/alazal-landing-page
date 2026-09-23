@@ -7,6 +7,7 @@ import {
 } from 'three';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {clamp, range, mix, fragmentState} from './story-motion.js';
+import {batchStaticBoxes} from './scene-performance.js';
 
 // The original dot is never stretched: rigid rotation and uniform scale only.
 export function createBrandScene(mount) {
@@ -47,7 +48,8 @@ export function createBrandScene(mount) {
   }
   function textured(parent,texture,w,h,x,y,z) {
     const mat=keep(new MeshBasicMaterial({map:texture,transparent:true,side:DoubleSide,toneMapped:false}));
-    const mesh=new Mesh(plane,mat);mesh.scale.set(w,h,1);mesh.position.set(x,y,z);parent.add(mesh);return mesh;
+    const mesh=new Mesh(plane,mat);mesh.scale.set(w,h,1);mesh.position.set(x,y,z);
+    mesh.updateMatrix();mesh.matrixAutoUpdate=false;parent.add(mesh);return mesh;
   }
   const loader=new TextureLoader();
   function texture(url) {
@@ -145,8 +147,10 @@ export function createBrandScene(mount) {
   const screen=textured(phoneBody,platformTexture,2.07,3.68,0,0,.14);
   block(phoneBody,.06,.44,.13,1.17,.7,0,glass);block(phoneBody,.42,.06,.01,0,1.92,.136,glass);assembly(3,phoneBody);
 
+  const batches=batchStaticBoxes(world,cube,new Set(seatLights.map(({light})=>light)));
+
   // Lit 3D fragments, one instanced draw call, with real depth and rotation.
-  const count=innerWidth<600?160:240,fragments=new InstancedMesh(fragmentGeometry,teal,count);
+  const count=innerWidth<600?120:180,fragments=new InstancedMesh(fragmentGeometry,teal,count);
   fragments.instanceMatrix.setUsage(DynamicDrawUsage);fragments.frustumCulled=false;world.add(fragments);
   const dummy=new Object3D(),seeds=[],bursts=[];
   for(let i=0;i<count;i++) {
@@ -162,38 +166,44 @@ export function createBrandScene(mount) {
     const edge=i%4,along=Math.floor(i/4)/Math.ceil(count/4);
     return edge===0?[-1.11+along*2.22,1.95,.1]:edge===1?[1.11,1.95-along*3.9,.1]:edge===2?[1.11-along*2.22,-1.95,.1]:[-1.11,-1.95+along*3.9,.1];
   };
+  // Fixed destinations and trigonometry are prepared once, not allocated for
+  // every fragment on every frame of a transition.
+  const targets=Array.from({length:4},(_,chapter)=>Array.from({length:count},(_,i)=>destination(chapter,i)));
   let lastPose={x:0,y:0,z:0,chapter:-1,build:0},ticking=0,active=false,lost=false,disposed=false,previous=0;
+  let renderedChapter=-2,renderedConstruction=-1,cameraSpread=-1;
   const ready=()=>{mount.classList.add('is-ready');document.documentElement.classList.add('webgl-story');};
   function draw(time=performance.now()) {
     if(lost||disposed)return;
     const p=lastPose,b=clamp(p.build||0),chapter=p.chapter,physical=chapter>=0&&chapter<=4&&(b>.0001||chapter>0);
     const phase=fragmentState(chapter,b,p.exit||0),c=phase.construction;
-    models.forEach((model,i)=>model.visible=physical&&chapter===i);
+    const visibleChapter=physical?chapter:-1,changedChapter=renderedChapter!==visibleChapter;
+    if(changedChapter){models.forEach((model,i)=>model.visible=physical&&chapter===i);renderedChapter=visibleChapter;}
     world.rotation.set(0,0,0);world.position.set(0,0,0);dot.position.set(0,0,0);dot.scale.setScalar(1);dot.rotation.set(p.x||0,p.y||0,p.z||0);fragments.visible=false;
     dotFace.opacity=dotEdge.opacity=1;dot.visible=true;
     if(physical) {
-      const t=time*.001,expand=phase.orientation,drift=active?Math.sin(t*.38)*.09:0;
+      const t=time*.001,expand=phase.orientation,drift=active?Math.sin(t*.30)*.06:0;
       if(chapter===0)world.position.x=range(c,.45,1)*.85;
       world.rotation.set(mix(0,chapter===1?.36:chapter===2?.28:.13,expand),mix(0,chapter===0?-.36:chapter===1?-.46:chapter===2?-.38:-.23,expand)+drift*expand,0);
-      if(chapter===3)world.rotation.y+=Math.sin(t*.55)*.055*expand;
-      camera.fov=mix(29.54,34,phase.camera);camera.position.z=mix(7.5,9.5,phase.camera);camera.updateProjectionMatrix();
-      for(const part of parts[chapter]||[]) {
+      if(chapter===3)world.rotation.y+=Math.sin(t*.44)*.035*expand;
+      if(cameraSpread!==phase.camera){cameraSpread=phase.camera;camera.fov=mix(29.54,34,phase.camera);camera.position.z=mix(7.5,9.5,phase.camera);camera.updateProjectionMatrix();}
+      if(changedChapter||renderedConstruction!==c)for(const part of parts[chapter]||[]) {
         const amount=range(c,.24+part.delay,.70+part.delay);part.node.visible=amount>.001;part.node.position.copy(part.position);
         part.node.position.y+=(1-amount)*(part.delay%.2>.08?-2.5:2.5);part.node.position.z-=(1-amount)*2;
         part.node.rotation.copy(part.rotation);part.node.rotation.y+=(1-amount)*.75;part.node.scale.setScalar(Math.max(.001,amount));
       }
+      renderedConstruction=c;
       let x=0,y=0,z=0,size=1,ry=0;
       if(chapter===0) {
-        const opening=range(c,.55,1)*(1.85+(active?Math.sin(t*.6)*.07:0));
+        const opening=range(c,.55,1)*(1.85+(active?Math.sin(t*.48)*.045:0));
         cover.visible=c>.24;cover.scale.setScalar(Math.max(.001,range(c,.24,.64)));cover.rotation.y=-opening;
-        leaves.forEach((leaf,i)=>{const turn=range(c,.63+i*.038,.85+i*.03);leaf.visible=c>.6;leaf.rotation.y=-turn*(1.5-i*.19)+(active?Math.sin(t*.85+i*.8)*.07*turn:0);});
+        leaves.forEach((leaf,i)=>{const turn=range(c,.63+i*.038,.85+i*.03);leaf.visible=c>.6;leaf.rotation.y=-turn*(1.5-i*.19)+(active?Math.sin(t*.68+i*.8)*.045*turn:0);});
         const localX=1.24,localZ=.355;
         x=-1.15+localX*Math.cos(opening)-localZ*Math.sin(opening);z=localX*Math.sin(opening)+localZ*Math.cos(opening);y=.615;size=.145;ry=-opening;
       } else if(chapter===1) {
         x=.25;y=.22;z=-1.21;size=.083;
-        seatLights.forEach(({light,row,col})=>{light.visible=!active||Math.sin(t*1.7-row*.65-col*.13)>-.25;});
-      } else if(chapter===2) {y=-.25;z=.2;size=.33;ry=active?t*.24:0;}
-      else if(chapter===3){y=2.42;z=.03;size=.18;ry=active?Math.sin(t*.5)*.35:0;phone.rotation.y=(1-range(c,.5,1))*1.5;screen.visible=c>.6;}
+        seatLights.forEach(({light,row,col})=>{light.visible=!active||Math.sin(t*1.2-row*.65-col*.13)>-.6;});
+      } else if(chapter===2) {y=-.25;z=.2;size=.33;ry=active?t*.18:0;}
+      else if(chapter===3){y=2.42;z=.03;size=.18;ry=active?Math.sin(t*.4)*.24:0;phone.rotation.y=(1-range(c,.5,1))*1.5;screen.visible=c>.6;}
       const attach=chapter===4?0:range(b,.08,.8);dot.position.set(x*attach,y*attach,z*attach);dot.scale.setScalar(mix(1,size,attach));
       dot.rotation.set(0,ry*attach+(1-attach)*expand*4.4,0);
       dotFace.opacity=dotEdge.opacity=phase.solid;
@@ -203,10 +213,10 @@ export function createBrandScene(mount) {
       if(fragments.visible) {
         // The cloud's orientation is time-based and identical on both sides of
         // every boundary, including reverse scrolling and the final gathering.
-        const spin=t*.09;
+        const spin=t*.065,cos=Math.cos(spin),sin=Math.sin(spin),target=targets[Math.min(chapter,3)];
         for(let i=0;i<count;i++) {
-          const from=seeds[i],burst=bursts[i],to=destination(chapter,i);
-          const bx=burst[0]*Math.cos(spin)-burst[2]*Math.sin(spin),bz=burst[0]*Math.sin(spin)+burst[2]*Math.cos(spin);
+          const from=seeds[i],burst=bursts[i],to=target[i];
+          const bx=burst[0]*cos-burst[2]*sin,bz=burst[0]*sin+burst[2]*cos;
           dummy.position.set(mix(mix(from[0],bx,scatter),to[0],assemble),mix(mix(from[1],burst[1],scatter),to[1],assemble),mix(mix(from[2],bz,scatter),to[2],assemble));
           dummy.rotation.set(i*.73+spin,i*.39+spin*2,i*.11);dummy.scale.setScalar((.023+(i%5)*.006)*shardScale);dummy.updateMatrix();fragments.setMatrixAt(i,dummy.matrix);
         }
@@ -231,7 +241,7 @@ export function createBrandScene(mount) {
   mount.appendChild(renderer.domElement);draw();ready();
   return {render,setActive,dispose(){
     setActive(false);disposed=true;renderer.domElement.removeEventListener('webglcontextlost',onLost);renderer.domElement.removeEventListener('webglcontextrestored',onRestored);
-    resources.forEach(value=>value.dispose());textures.forEach(value=>value.dispose());fragments.dispose();environment.dispose();renderer.dispose();renderer.domElement.remove();
+    batches.forEach(batch=>batch.dispose());resources.forEach(value=>value.dispose());textures.forEach(value=>value.dispose());fragments.dispose();environment.dispose();renderer.dispose();renderer.domElement.remove();
     mount.classList.remove('is-ready');document.documentElement.classList.remove('webgl-story');
   }};
 }

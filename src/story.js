@@ -43,7 +43,7 @@ export function initStory() {
     if(document.hidden) {scene?.setActive(false);return;}
     const raw=(scrollY-storyTop)/travel*panels.length;
     const elapsed=lastTick?Math.min(64,time-lastTick):16;lastTick=time;
-    if(shownProgress===null||snapNext||!enabled)shownProgress=raw;
+    if(shownProgress===null||snapNext||!enabled||raw<0||raw>=panels.length)shownProgress=raw;
     else shownProgress=mix(shownProgress,raw,1-Math.exp(-elapsed/85));
     snapNext=false;
     const settling=Math.abs(shownProgress-raw)>.0002;
@@ -52,8 +52,7 @@ export function initStory() {
     const entrance=enabled?range(scrollY/storyTop,.12,1):0;
     // Fixed stage; all depth, page turns and scattering happen in the 3D world.
     const heroPoint=box(heroAnchor), finalPoint=box(finishAnchor);
-    const rects=arts.map(a=>a.getBoundingClientRect());
-    const art=rects[state.active];
+    const art=arts[state.active].getBoundingClientRect();
     const span=Math.min(art.width,art.height)*.96;
     const centre={x:art.left+art.width/2,y:art.top+art.height/2,size:span*shapeRatio};
     let point=heroPoint, pose={x:0,y:0,z:heroAngle,chapter:-1,build:0};
@@ -69,8 +68,8 @@ export function initStory() {
         lastState=key;
         panels.forEach((panel,i)=>{
           const current=i===state.active;
-          panel.style.opacity=current?'1':'0';
-          panel.style.visibility=current?'visible':'hidden';
+          if(!current&&i!==active&&active!==-1)return;
+          if(i!==active||!current){panel.style.opacity=current?'1':'0';panel.style.visibility=current?'visible':'hidden';}
           const build=current?state.build:0;
           panel.style.setProperty('--build',String(build));
           panel.style.setProperty('--reveal',String(sceneReveal(i,build,state.gather)));
