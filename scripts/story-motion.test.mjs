@@ -1,6 +1,15 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {storyState,fragmentState,sceneReveal} from '../src/story-motion.js';
+import {storyState,fragmentState,sceneReveal,stickyStageTop} from '../src/story-motion.js';
+
+test('Cached story anchors follow the sticky stage before, during and after pinning',()=>{
+  assert.equal(stickyStageTop(0,900,3000),900);
+  assert.equal(stickyStageTop(600,900,3000),300);
+  for(const scroll of [900,1600,3200,3900])assert.equal(stickyStageTop(scroll,900,3000),0);
+  assert.equal(stickyStageTop(4100,900,3000),-200);
+  // Returning through either boundary must not move the final logo's dot.
+  for(const boundary of [900,3900])assert(Math.abs(stickyStageTop(boundary-.001,900,3000)-stickyStageTop(boundary+.001,900,3000))<.0021);
+});
 
 test('Scene boundaries preserve the same cloud, camera and orientation in both scroll directions',()=>{
   for(let chapter=0;chapter<4;chapter++) {

@@ -1,4 +1,4 @@
-import {clamp, mix, range, storyState, sceneReveal} from './story-motion.js';
+import {clamp, mix, range, storyState, sceneReveal, stickyStageTop} from './story-motion.js';
 
 export function initStory() {
   const root = document.documentElement;
@@ -16,6 +16,7 @@ export function initStory() {
   let scene, frame = 0, enabled = false, storyTop = 0, travel = 1, heroAngle = 0;
   let active = -1, lastPose = '', lastState = '', previousWidth = innerWidth, previousHeight = innerHeight;
   let shownProgress=null,lastTick=0,snapNext=true;
+  let heroPoint,heroBottom=0,finalPoint,centres=[],canvasSpan=480;
   const box = element => { const r = element.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2, size:element.offsetWidth}; };
   const blend = (a,b,t) => ({x:mix(a.x,b.x,t), y:mix(a.y,b.y,t), size:mix(a.size,b.size,t)});
 
@@ -24,6 +25,16 @@ export function initStory() {
     heroAngle = -Math.atan2(matrix.b, matrix.a);
     storyTop = story.getBoundingClientRect().top + scrollY;
     travel = Math.max(1, story.offsetHeight - stage.offsetHeight);
+    const stageTop=stage.getBoundingClientRect().top;
+    heroPoint=box(heroAnchor);heroPoint.y+=scrollY;
+    heroBottom=hero.getBoundingClientRect().bottom+scrollY;
+    finalPoint=box(finishAnchor);finalPoint.y-=stageTop;
+    centres=arts.map(art=>{
+      const r=art.getBoundingClientRect(),span=Math.min(r.width,r.height)*.96;
+      return {x:r.left+r.width/2,y:r.top+r.height/2-stageTop,size:span*shapeRatio};
+    });
+    canvasSpan=Math.max(...centres.map(p=>p.size/shapeRatio));
+    scene?.resize(canvasSpan);
     lastState = '';
     invalidate();
   }
@@ -40,7 +51,7 @@ export function initStory() {
   }
   function update(time) {
     frame=0;
-    if(document.hidden) {scene?.setActive(false);return;}
+    if(document.hidden)return;
     const raw=(scrollY-storyTop)/travel*panels.length;
     const elapsed=lastTick?Math.min(64,time-lastTick):16;lastTick=time;
     if(shownProgress===null||snapNext||!enabled||raw<0||raw>=panels.length)shownProgress=raw;
@@ -50,20 +61,21 @@ export function initStory() {
     if(!settling)shownProgress=raw;
     const state=storyState(shownProgress,panels.length);
     const entrance=enabled?range(scrollY/storyTop,.12,1):0;
-    // Fixed stage; all depth, page turns and scattering happen in the 3D world.
-    const heroPoint=box(heroAnchor), finalPoint=box(finishAnchor);
-    const art=arts[state.active].getBoundingClientRect();
-    const span=Math.min(art.width,art.height)*.96;
-    const centre={x:art.left+art.width/2,y:art.top+art.height/2,size:span*shapeRatio};
-    let point=heroPoint, pose={x:0,y:0,z:heroAngle,chapter:-1,build:0};
+    // Geometry is measured only when the layout changes. This frame performs
+    // arithmetic followed by writes, so scroll never forces a layout flush.
+    const stageY=enabled?stickyStageTop(scrollY,storyTop,travel):storyTop-scrollY;
+    const heroNow={...heroPoint,y:heroPoint.y-scrollY};
+    const centre={...centres[state.active],y:centres[state.active].y+stageY};
+    const finish={...finalPoint,y:finalPoint.y+stageY};
+    let point=heroNow, pose={x:0,y:0,z:heroAngle,chapter:-1,build:0};
     if(enabled) {
-      point=blend(heroPoint,centre,entrance);
+      point=blend(heroNow,centre,entrance);
       pose={x:0,y:0,z:mix(heroAngle,0,entrance),chapter:state.active,build:state.build*entrance,exit:state.gather};
       if(state.active===4) {
-        point=blend(centre,finalPoint,range(state.local,.38,.70));
+        point=blend(centre,finish,range(state.local,.38,.70));
         pose={x:0,y:0,z:0,chapter:state.local<.38?4:-1,build:range(state.local,0,.38),exit:0};
       }
-      const key=[state.active,state.local.toFixed(4),entrance.toFixed(4),span.toFixed(1)].join(',');
+      const key=[state.active,state.local.toFixed(4),entrance.toFixed(4)].join(',');
       if(key!==lastState) {
         lastState=key;
         panels.forEach((panel,i)=>{
@@ -85,16 +97,15 @@ export function initStory() {
         buttons.forEach((b,i)=>i===active?b.setAttribute('aria-current','step'):b.removeAttribute('aria-current'));
       }
     }
-    const visible=point.y+point.size>0&&point.y-point.size<innerHeight&&(enabled||hero.getBoundingClientRect().bottom>0);
+    const visible=point.y+point.size>0&&point.y-point.size<innerHeight&&(enabled||heroBottom>scrollY);
     mount.style.visibility=visible?'visible':'hidden';
-    scene?.setActive(enabled&&visible&&shownProgress>=0&&shownProgress<4.38);
     // The dot is the material of the story, not an unexplained navigation button.
     if(visible) {
       mount.style.transform=`translate3d(${point.x-180}px,${point.y-180}px,0) scale(${point.size/(shapeRatio*360)})`;
       fallback.style.transform=`rotate(${-pose.z}rad)`;
       fallback.style.opacity=enabled&&state.active<4?String(1-range(state.build,.14,.48)):'1';
       const poseKey=Object.values(pose).map(n=>n.toFixed(4)).join(',');
-      if(scene&&poseKey!==lastPose){scene.render(pose);lastPose=poseKey;}
+      if(scene&&poseKey!==lastPose&&scene.render(pose,time,!settling))lastPose=poseKey;
     }
     root.classList.add('object-active');
     if(settling)invalidate();
@@ -111,7 +122,7 @@ export function initStory() {
     if(innerWidth!==previousWidth||Math.abs(innerHeight-previousHeight)>100){previousWidth=innerWidth;previousHeight=innerHeight;measure();}
     else invalidate();
   });
-  document.addEventListener('visibilitychange',()=>{if(document.hidden)scene?.setActive(false);else invalidate();});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)invalidate();});
   document.fonts.ready.then(measure);
   new ResizeObserver(measure).observe(hero);
   configure();
@@ -119,7 +130,7 @@ export function initStory() {
     try {
       const url=new URL('brand-scene.js',import.meta.url);url.search=new URL(import.meta.url).search;
       const {createBrandScene}=await import(url.href);
-      scene=createBrandScene(mount);lastPose='';invalidate();
+      scene=createBrandScene(mount);scene.resize(canvasSpan);lastPose='';invalidate();
     } catch {mount.dataset.rendering='fallback';}
   };
   const observer=new IntersectionObserver(entries=>{

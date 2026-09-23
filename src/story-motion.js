@@ -3,6 +3,10 @@ export const mix = (a, b, t) => a + (b - a) * t;
 export const ease = t => { t = clamp(t); return t * t * (3 - 2 * t); };
 export const range = (value, start, end) => ease((value - start) / (end - start));
 
+// The sticky stage follows the document before/after its pinned interval.
+// Cached stage-relative anchors need no layout queries while scrolling.
+export const stickyStageTop = (scroll, top, travel) => top - scroll + clamp(scroll - top, 0, travel);
+
 // Scene boundaries share a single cloud, so material passes from one model to
 // the next without resetting to the logo between institutions.
 export function storyState(progress, count = 5) {
