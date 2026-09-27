@@ -1,6 +1,14 @@
 # Alazal Meta Pixel setup
 
-The owner-provided test Pixel **28576937971945403** is configured in `analytics-config.js`. It loads automatically on `alazalgroup.com` and `www.alazalgroup.com`, except when a visitor has opted out or the browser sends Global Privacy Control. There is no pop-up: the compact bottom-of-page settings disclosure provides a clear disclosure, privacy link and tracking toggle. A Pixel ID is public; an access token is not needed for this browser integration.
+## Current update — September 27, 2026
+
+The new advertising Pixel is **1026444343786182**. This revision replaces the old test Pixel; it does not load both. The browser Pixel works on static hosting and does not require your own server, an access token or Conversions API. No CAPI endpoint is included or enabled.
+
+The Pixel ID in the supplied code is authoritative for this installation. The owner-supplied implementation-instructions link contains a different number (`1004152738722694`); its page ID alone does not establish which dataset it describes. Check that Events Manager Settings and the ad account's connected assets show **1026444343786182**. Updating website code does not grant access to an ad account or connect assets inside Meta.
+
+`CompleteRegistration` and `SubmitApplication` are not emitted: the existing Google Forms do not report successful submissions back to this site. Opening a form remains `RegistrationFormOpen`. `FindLocation` replaces the earlier custom `GetDirections` event for external directions links.
+
+The owner-provided advertising Pixel **1026444343786182** is configured in `analytics-config.js`. It loads automatically on `alazalgroup.com` and `www.alazalgroup.com`, except when a visitor has opted out or the browser sends Global Privacy Control. There is no pop-up: the compact bottom-of-page settings disclosure provides a clear disclosure, privacy link and tracking toggle. A Pixel ID is public; an access token is not needed for this browser integration.
 
 This is an automatic-loading configuration, not a jurisdiction-aware consent system. A footer notice does not replace prior consent wherever it is required. See [Meta's Business Tools terms](https://www.facebook.com/legal/technology_terms) when deciding which audiences and regions to serve.
 
@@ -15,7 +23,7 @@ This is an automatic-loading configuration, not a jurisdiction-aware consent sys
 
 ## 2. Verify before spending
 
-In [Events Manager](https://business.facebook.com/events_manager), select the dataset with ID **28576937971945403** and open **Test events**. Under browser events, enter `https://alazalgroup.com` and open the website from that screen. Keep Events Manager open in the same browser. Tracking starts automatically. If you previously declined or turned tracking off, use **تفعيل قياس Meta** under **الخصوصية وإعدادات القياس** at the bottom of the page. Reload the page if it was already open before starting the test.
+In [Events Manager](https://business.facebook.com/events_manager), select the dataset with ID **1026444343786182** and open **Test events**. Under browser events, enter `https://alazalgroup.com` and open the website from that screen. Keep Events Manager open in the same browser. Tracking starts automatically. If you previously declined or turned tracking off, use **تفعيل قياس Meta** under **الخصوصية** at the bottom of the page. Reload the page if it was already open before starting the test.
 
 Confirm **PageView**, select a different institution in the map to get **ViewContent**, and click its WhatsApp link to get **Contact**. Return to Test events to inspect the event names and `facility` / `channel` parameters. A contact click opens the contact destination but does not send a message automatically. Test the live site: `127.0.0.1` and `localhost` deliberately do not send real Meta traffic. If an older version remains visible after deployment, hard-refresh with **Ctrl+Shift+R**.
 
@@ -24,13 +32,13 @@ Confirm **PageView**, select a different institution in the map to get **ViewCon
 | `PageView` | One landing-page visit when tracking is enabled | — |
 | `ViewContent` | Explicitly opens an institution's information or selects a map destination | `facility` |
 | `Contact` | Clicks a WhatsApp or phone link | `facility`, `channel` |
-| `GetDirections` (custom) | Clicks the external location link | `facility`, `channel=map` |
+| `FindLocation` | Clicks the external location link | `facility`, `channel=map` |
 | `RegistrationFormOpen` (custom) | Opens an existing Google registration form; not a completed enrollment | `facility`, `form_id` |
 | `SocialClick` (custom) | Opens an Instagram, Facebook or Telegram link | `facility`, `channel` |
 
 Facility values: `institute`, `girls`, `boys`, `schools`, `platform`, `library`, `publisher`; `group` is used for general links. Opening/closing story chapters does not create extra PageViews. Default-open disclosures do not count as explicit interest. Contact is click intent, not a completed conversation, qualified lead, enrollment or payment. The site intentionally does not emit `Lead`, `CompleteRegistration` or `Purchase` without a real completed action.
 
-Also test **إيقاف قياس Meta** under **الخصوصية وإعدادات القياس** at the bottom of the page: new events stop. Reload while opted out: no Meta script should load. **تفعيل قياس Meta** restores tracking. This choice affects Meta only; the site's existing Google Analytics and Clarity remain separate. Saved opt-outs, ad blockers and browser protections mean not every visitor can be measured or retargeted.
+Also test **إيقاف قياس Meta** under **الخصوصية** at the bottom of the page: new events stop. Reload while opted out: no Meta script should load. **تفعيل قياس Meta** restores tracking. This choice affects Meta only; the site's existing Google Analytics and Clarity remain separate. Saved opt-outs, ad blockers and browser protections mean not every visitor can be measured or retargeted.
 
 If you see no events, check the ID, correct dataset and production domain first; then the bottom-of-page tracking setting, browser blockers and Events Manager Diagnostics. Domain restrictions currently allow `alazalgroup.com` and `www.alazalgroup.com`. Other preview hosts deliberately do not send Meta traffic.
 

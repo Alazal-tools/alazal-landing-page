@@ -2,6 +2,16 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createMetaPixel, loadMetaLibrary, isMetaTrackingEnabled } from '../src/meta-pixel.js';
 import { summarizeMetaRequest } from '../src/pixel-diagnostics.js';
+import { metaPixelId } from '../analytics-config.js';
+
+test('only the new advertising Pixel is initialized for the website', async () => {
+  assert.equal(metaPixelId, '1026444343786182');
+  const f = fixture(metaPixelId);
+  f.pixel.setConsent(true);
+  f.finish(); await Promise.resolve();
+  assert.deepEqual(f.calls.filter(call => call[0] === 'init'), [['init', metaPixelId]]);
+  assert.equal(f.calls.filter(call => call[2] === 'PageView').length, 1);
+});
 
 test('diagnostics report Meta request evidence without visitor identifiers or false receipt claims', () => {
   const id = '123456789012345';
@@ -78,7 +88,7 @@ test('form opening is a custom intent event with fixed IDs, never a completed re
   f.pixel.setConsent(true);
   f.finish(); await Promise.resolve();
   f.pixel.track('RegistrationFormOpen', {facility:'schools',form_id:'school-general',student_name:'private',phone:'private'});
-  assert.deepEqual(f.calls.at(-1), ['trackSingleCustom','123456789012345','RegistrationFormOpen',{facility:'schools',form_id:'school-general'}]);
+  assert.deepEqual(f.calls.at(-1), ['trackSingleCustom','123456789012345','RegistrationFormOpen',{facility:'schools',form_id:'school-general'},{eventID:f.events.at(-1).eventId}]);
   f.pixel.track('RegistrationFormOpen', {form_id:'unrecognized-input'});
   f.pixel.track('CompleteRegistration', {form_id:'school-general'});
   assert.deepEqual(f.events.map(e=>e.name), ['PageView','RegistrationFormOpen']);
@@ -103,11 +113,12 @@ test('one SDK load/init/PageView and scoped, sanitized events after consent', as
   assert.equal(f.loads(), 1);
   assert.equal(f.calls.filter(c=>c[0]==='init').length,1);
   assert.deepEqual(f.calls.find(c=>c[0]==='set'), ['set','autoConfig',false,'123456789012345']);
-  assert.deepEqual(f.calls.find(c=>c[2]==='Contact'), ['trackSingle','123456789012345','Contact',{facility:'boys',channel:'whatsapp'}]);
+  assert.deepEqual(f.calls.find(c=>c[2]==='Contact'), ['trackSingle','123456789012345','Contact',{facility:'boys',channel:'whatsapp'},{eventID:f.events.find(e=>e.name==='Contact').eventId}]);
   f.pixel.setConsent(true);
   assert.equal(f.events.filter(e=>e.name==='PageView').length,1);
-  f.pixel.track('GetDirections',{facility:'girls',channel:'map'},true);
-  assert.equal(f.calls.at(-1)[0],'trackSingleCustom');
+  f.pixel.track('FindLocation',{facility:'girls',channel:'map'});
+  assert.equal(f.calls.at(-1)[0],'trackSingle');
+  assert.equal(f.calls.at(-1)[2],'FindLocation');
   f.pixel.track('Lead',{email:'private'});
   assert(!f.events.some(e=>e.name==='Lead'));
 });

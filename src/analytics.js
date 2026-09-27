@@ -94,13 +94,13 @@ if (eligible) {
       const details = element.parentElement;
       if (!details.open && details.matches('.entity, .contact-entry')) view(facilityFor(element));
     }
-    if (element.dataset.contactDestination) track('GetDirections', { facility: element.dataset.contactDestination, channel: 'map' }, true);
+    if (element.dataset.contactDestination) track('FindLocation', { facility: element.dataset.contactDestination, channel: 'map' });
     if (element.tagName !== 'A') return;
     const url = new URL(element.href);
     const facility = facilityFor(element);
     if (url.protocol === 'tel:') track('Contact', { facility, channel: 'phone' });
     else if (url.hostname === 'wa.me') track('Contact', { facility, channel: 'whatsapp' });
-    else if (url.hostname === 'share.google') track('GetDirections', { facility, channel: 'map' }, true);
+    else if (url.hostname === 'share.google') track('FindLocation', { facility, channel: 'map' });
     else {
       const host = url.hostname.replace(/^www\./, '');
       const channel = { 'instagram.com': 'instagram', 'facebook.com': 'facebook', 't.me': 'telegram' }[host];

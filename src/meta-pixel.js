@@ -1,3 +1,5 @@
+import { sanitizeMetaEvent } from './meta-events.js';
+
 // Existing visitor opt-outs and browser privacy signals override the default.
 export function isMetaTrackingEnabled({ eligible, preference, globalPrivacyControl }) {
   return Boolean(eligible) && preference !== 'denied' && !globalPrivacyControl;
@@ -5,7 +7,7 @@ export function isMetaTrackingEnabled({ eligible, preference, globalPrivacyContr
 
 // The small transport is separate from the page so preferences and delivery can be
 // tested without sending any real visitors or test traffic to Meta.
-export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => {} }) {
+export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => {}, makeId = () => globalThis.crypto.randomUUID(), now = () => Date.now() }) {
   let consent = false;
   let loading;
   let send;
@@ -14,13 +16,14 @@ export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => 
   let pending = [];
   let loadError = false;
   const valid = /^\d{10,20}$/.test(pixelId);
+  const identify = event => ({ ...event, eventId: makeId(), eventTime: Math.floor(now() / 1000) });
 
   function deliver(event) {
     if (event.name === 'PageView') {
       if (pageViewSent) return;
       pageViewSent = true;
     }
-    if (!debug) send(event.custom ? 'trackSingleCustom' : 'trackSingle', pixelId, event.name, event.data);
+    if (!debug) send(event.custom ? 'trackSingleCustom' : 'trackSingle', pixelId, event.name, event.data, { eventID: event.eventId });
     onEvent(event);
   }
   function flush() {
@@ -33,7 +36,7 @@ export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => 
       initialized = true;
     }
     if (!debug) send('consent', 'grant');
-    deliver({ name: 'PageView', data: {}, custom: false });
+    if (!pageViewSent) deliver(identify({ name: 'PageView', data: {}, custom: false }));
     pending.splice(0).forEach(deliver);
   }
   return {
@@ -53,20 +56,11 @@ export function createMetaPixel({ pixelId, load, debug = false, onEvent = () => 
         }).catch(() => { loading = null; pending = []; loadError = true; });
       }
     },
-    track(name, data = {}, custom = false) {
-      if (!consent || !['ViewContent', 'Contact', 'GetDirections', 'SocialClick', 'RegistrationFormOpen'].includes(name)) return;
-      // Only fixed catalogue identifiers/channel names enter the event payload.
-      // Never forward form values, phone numbers, addresses or route origins.
-      const allowedFacilities = ['group', 'institute', 'schools', 'girls', 'boys', 'platform', 'library', 'publisher'];
-      const safe = {};
-      if (allowedFacilities.includes(data.facility)) safe.facility = data.facility;
-      if (['whatsapp', 'phone', 'telegram', 'instagram', 'facebook', 'map'].includes(data.channel)) safe.channel = data.channel;
-      if (name === 'RegistrationFormOpen') {
-        if (!['school-general', 'school-elite', 'institute-general', 'institute-100', 'institute-challenge'].includes(data.form_id)) return;
-        safe.form_id = data.form_id;
-        custom = true;
-      }
-      const event = { name, data: safe, custom };
+    track(name, data = {}) {
+      if (!consent || name === 'PageView') return;
+      const safe = sanitizeMetaEvent(name, data);
+      if (!safe) return;
+      const event = identify(safe);
       if (debug || send) deliver(event);
       else if (pending.length < 30) pending.push(event);
     },

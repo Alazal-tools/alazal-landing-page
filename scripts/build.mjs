@@ -7,7 +7,7 @@ import './render-arrival.mjs';
 await import('./render-registration.mjs');
 
 await build({
-  entryPoints: ["src/brand-scene.js", "src/story.js", "src/arrival.js", "src/analytics.js", "src/pixel-diagnostics.js"],
+  entryPoints: ["src/brand-scene.js", "src/story.js", "src/arrival.js", "src/analytics.js", "src/pixel-diagnostics.js", "src/media.js"],
   outdir: "public",
   bundle: true,
   minify: true,
@@ -28,6 +28,7 @@ await writeFile('index.html',readFileSync('index.html','utf8')
   .replace(/src="script\.js(?:\?v=[a-f0-9]+)?"/,`src="script.js?v=${pageVersion}"`)
   .replace(/href="styles\.css(?:\?v=[a-f0-9]+)?"/,`href="styles.css?v=${pageVersion}"`));
 const output = "public/brand-scene.js";
+await import('./render-media.mjs');
 console.log(
   `3D module: ${Math.round((await stat(output)).size / 1024)} KB / ${Math.round(gzipSync(readFileSync(output)).length / 1024)} KB gzip`,
 );

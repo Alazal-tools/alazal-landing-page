@@ -32,6 +32,10 @@ Registration follows the story. Visitors choose school or institute before seein
 
 The original user references are documented in `DESIGN-NOTES.md`; no third-party animation component or runtime dependency was added.
 
+## Media, podcast and articles
+
+The landing page includes a content preview after registration and before the location guide: the latest article links directly to its reading page, and two lazy-loaded thumbnails lead to the corresponding videos. `media.html` remains a separate lightweight content hub, linked from the header, mobile menu, hero and preview. Videos play inline on request without an extra outbound YouTube button. `data/media.json` holds videos, numbered podcast episodes and articles; the build creates the hub and individual article pages. The first article is محمد صالح's introduction to بودكاست مُعلِّم, with a text-only article listing, reading-time estimate and responsive reading layout. See [CONTENT-GUIDE.md](CONTENT-GUIDE.md) for the content fields and local workflow. No sample articles or podcast episodes are published.
+
 ## Validation
 
 `npm test` verifies assets, anchors, requested removals, the five registration destinations, geographic route integrity, build budgets, Pixel behavior and the construction/scattering timeline. Motion tests verify continuous fragment/camera states at all scene boundaries in both scroll directions, bounded animation values, and the initial/final solid point. Browser checks cover desktop, narrow phones, landscape, all five scenes, screen proportions, registration choices and the location guide.
@@ -44,7 +48,7 @@ The illustrated entrance insets remain on desktop and are omitted on phones to k
 
 ## Meta advertising measurement
 
-Meta Pixel `28576937971945403` is configured in `analytics-config.js`. See [META-PIXEL-SETUP.md](META-PIXEL-SETUP.md) for Test Events, event meanings and retargeting audiences. The independent small module loads Meta automatically on approved production domains while respecting saved visitor opt-outs and Global Privacy Control. The compact “الخصوصية وإعدادات القياس” disclosure contains the privacy link and tracking toggle. It does not block story initialization and includes a local dry run. Existing Google Analytics and Clarity remain separate.
+Meta Pixel `1026444343786182` is configured in `analytics-config.js`. See [META-PIXEL-SETUP.md](META-PIXEL-SETUP.md) for Test Events, event meanings and retargeting audiences. The independent small module loads Meta automatically on approved production domains while respecting saved visitor opt-outs and Global Privacy Control. The compact “الخصوصية” disclosure contains the privacy link and tracking toggle. It does not block story initialization and includes a local dry run. Existing Google Analytics and Clarity remain separate.
 
 ## Performance
 
