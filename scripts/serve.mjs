@@ -23,6 +23,7 @@ http
       let url = decodeURIComponent(
         new URL(req.url, "http://localhost").pathname,
       );
+      if(url==='/podcast')url='/podcast/';
       if (url.endsWith("/")) url += "index.html";
       const file = path.resolve(root, "." + url);
       const relative = path.relative(root, file);

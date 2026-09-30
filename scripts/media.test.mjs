@@ -8,7 +8,7 @@ const empty=()=>({videos:[],podcast:{title:'بودكاست معلم',episodes:[]
 const article={slug:'test-article',title:'عنوان المقال',author:'كاتب الاختبار',date:'2026-09-23',text:'الفقرة الأولى.\n\nالفقرة الثانية.\nسطر جديد.'};
 const video={id:'HJ-sBMqVRq4',title:'فيديو الاختبار',date:'2023-12-22',duration:'1:35:42'};
 
-test('The local hub includes the supplied videos without loading players or story code on arrival',async()=>{
+test('The local hub includes videos and a live podcast playlist without story code',async()=>{
   const data=JSON.parse(await readFile('data/media.json','utf8'));
   const html=await readFile('media.html','utf8');
   validateMedia(data);
@@ -18,16 +18,21 @@ test('The local hub includes the supplied videos without loading players or stor
   assert.equal(data.podcast.episodes[0].season,1);
   assert.equal(data.podcast.episodes[0].episode,1);
   assert.equal(data.podcast.playlistId,'PLODw1CMx1wDc');
-  assert(html.includes('data-playlist="PLODw1CMx1wDc"'));
+  assert(html.includes('data-playlist-src="https://www.youtube.com/embed/videoseries?list=PLODw1CMx1wDc'));
   assert(html.includes('قائمة الحلقات'));
   assert(!html.includes('الحلقات قريباً.'));
   assert.equal(data.articles.length,1);
   assert.equal(data.articles[0].author,'محمد صالح');
   assert(html.includes('href="articles/muallim-beyond-education.html"'));
   assert(!html.includes('youtube-link') && !html.includes('href="https://www.youtube.com/watch'));
-  assert.equal((html.match(/<button class="video-poster"/g)||[]).length,3);
-  for(const id of [...data.videos,...data.podcast.episodes].map(v=>v.id))assert(html.includes(`data-video="${id}"`));
-  assert(!/<iframe\b/.test(html));
+  assert.equal((html.match(/<button class="video-poster"/g)||[]).length,2);
+  for(const id of data.videos.map(v=>v.id))assert(html.includes(`data-video="${id}"`));
+  assert.equal((html.match(/<iframe\b/g)||[]).length,1);
+  assert(!html.includes('video-play-label'));
+  const redirect=await readFile('podcast/index.html','utf8');
+  assert(redirect.includes('https://www.youtube.com/playlist?list=PLODw1CMx1wDc'));
+  assert(redirect.includes('location.replace('));
+  assert(html.includes('href="podcast/"'));
   assert(!/brand-scene\.js|public\/story\.js|arrival\.js/.test(html));
   assert(html.includes('referrer" content="strict-origin-when-cross-origin'));
   assert(html.indexOf('dataset.mediaTab')<html.indexOf('rel="stylesheet"'));

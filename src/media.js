@@ -13,6 +13,11 @@ function selectPanel(id,updateURL=false) {
   if(!panels.some(panel=>panel.id===id))id='videos';
   if(panels.find(panel=>!panel.hidden)?.id!==id)stopPlayer();
   panels.forEach(panel=>{panel.hidden=panel.id!==id;});
+  document.querySelectorAll('[data-playlist-src]').forEach(player=>{
+    if(id==='podcast') {
+      if(!player.hasAttribute('src'))player.src=player.dataset.playlistSrc;
+    } else player.removeAttribute('src');
+  });
   document.documentElement.dataset.mediaTab=id;
   tabs.forEach(tab=>{
     const selected=tab.hash===`#${id}`;

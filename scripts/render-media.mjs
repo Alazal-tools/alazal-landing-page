@@ -11,6 +11,16 @@ await writeFile('index.html',landing.includes('<!-- content-preview:start -->')
 const versions={};
 for(const [name,file] of Object.entries({styles:'styles.css',css:'media.css',script:'public/media.js',analytics:'public/analytics.js'}))versions[name]=createHash('sha256').update(await readFile(file)).digest('hex').slice(0,12);
 await writeFile('media.html',renderMediaPage(data,versions));
+if(data.podcast.playlistId) {
+  await mkdir('podcast',{recursive:true});
+  const destination=`https://www.youtube.com/playlist?list=${data.podcast.playlistId}`;
+  await writeFile('podcast/index.html',`<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>بودكاست مُعلِّم — الأزل</title><meta name="description" content="جميع حلقات بودكاست مُعلِّم من مجموعة الأزل."/>
+<link rel="canonical" href="${destination}"/><meta http-equiv="refresh" content="0;url=${destination}"/>
+<script>location.replace(${JSON.stringify(destination)});</script></head>
+<body><p><a href="${destination}">شاهد بودكاست مُعلِّم على YouTube ↗</a></p></body></html>\n`);
+}
 if(data.articles.length)await mkdir('articles',{recursive:true});
 for(const article of data.articles)await writeFile(`articles/${article.slug}.html`,renderArticlePage(article,versions));
 // Remove only pages produced by this generator when an article is withdrawn.

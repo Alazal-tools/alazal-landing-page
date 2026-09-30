@@ -40,7 +40,7 @@ export function videoCard(video,isEpisode=false,playlist=null) {
     <div class="video-frame" data-video="${video.id}"${playlist?` data-playlist="${escapeHTML(playlist)}"`:''}>
       <button class="video-poster" type="button" data-play-video aria-label="تشغيل ${title}">
         <img src="https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg" data-thumbnail="${video.id}" width="1280" height="720" loading="lazy" decoding="async" alt=""/>
-        <span class="video-play">${playIcon}</span><span class="video-play-label">تشغيل الفيديو</span>
+        <span class="video-play" aria-hidden="true">${playIcon}</span>
         ${video.duration&&!playlist?`<span class="video-duration" dir="ltr">${escapeHTML(video.duration)}</span>`:''}
       </button>
     </div>
@@ -140,7 +140,7 @@ export function renderMediaPage(data,versions) {
     </section>
     <section id="podcast" class="media-panel" aria-labelledby="tab-podcast" data-media-panel>
       <div class="media-section-heading"><h2>${escapeHTML(data.podcast.title)}</h2></div>
-      ${episodes.length?collection(data.podcast.playlistId?[videoCard({...episodes[0],title:data.podcast.title},true,data.podcast.playlistId)]:episodes.map(v=>videoCard(v,true))):'<p class="media-empty">الحلقات قريباً.</p>'}
+      ${data.podcast.playlistId?`<div class="podcast-player video-frame"><iframe data-playlist-src="https://www.youtube.com/embed/videoseries?list=${escapeHTML(data.podcast.playlistId)}&amp;rel=0&amp;playsinline=1&amp;hl=ar" title="${escapeHTML(data.podcast.title)} — قائمة الحلقات" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><a class="podcast-link" href="podcast/">جميع الحلقات على YouTube <span aria-hidden="true">↗</span></a>`:episodes.length?collection(episodes.map(v=>videoCard(v,true))):'<p class="media-empty">الحلقات قريباً.</p>'}
     </section>
     <section id="articles" class="media-panel" aria-labelledby="tab-articles" data-media-panel>
       <div class="media-section-heading"><h2>المقالات</h2>${articles.length?'<span>الأحدث أولاً</span>':''}</div>
