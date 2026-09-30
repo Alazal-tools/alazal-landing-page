@@ -45,8 +45,8 @@ export function videoCard(video,isEpisode=false,playlist=null) {
       </button>
     </div>
     <div class="media-card-meta"><span>${playlist?'قائمة الحلقات':label}</span>${playlist?'':time(video.date)}</div>
-    <h3>${title}</h3>
-    ${playlist?'<p class="episode-guest">شاهد جميع الحلقات من قائمة البودكاست.</p>':isEpisode&&video.guest?`<p class="episode-guest">مع ${escapeHTML(video.guest)}</p>`:''}
+    <h3>${isEpisode?`<a href="https://www.youtube.com/watch?v=${escapeHTML(video.id)}" target="_blank" rel="noopener noreferrer">${title}</a>`:title}</h3>
+    ${playlist?'<p class="episode-guest">شاهد جميع الحلقات من قائمة البودكاست.</p>':isEpisode&&video.guest?`<p class="episode-guest">ضيف الحلقة: ${escapeHTML(video.guest)}</p>`:''}
   </article>`;
 }
 
@@ -140,10 +140,7 @@ export function renderMediaPage(data,versions) {
     </section>
     <section id="podcast" class="media-panel" aria-labelledby="tab-podcast" data-media-panel>
       <div class="media-section-heading"><h2>${escapeHTML(data.podcast.title)}</h2></div>
-      ${episodes.length?collection(episodes.map(episode=>`<article class="media-card podcast-episode" data-media-card>
-        <h3><a href="https://www.youtube.com/watch?v=${escapeHTML(episode.id)}" target="_blank" rel="noopener noreferrer">${escapeHTML(episode.title)} <span aria-hidden="true">↗</span></a></h3>
-        ${episode.guest?`<p class="episode-guest">ضيف الحلقة: ${escapeHTML(episode.guest)}</p>`:''}
-      </article>`),'articles'):'<p class="media-empty">الحلقات قريباً.</p>'}
+      ${episodes.length?collection(episodes.map(episode=>videoCard(episode,true))):'<p class="media-empty">الحلقات قريباً.</p>'}
     </section>
     <section id="articles" class="media-panel" aria-labelledby="tab-articles" data-media-panel>
       <div class="media-section-heading"><h2>المقالات</h2>${articles.length?'<span>الأحدث أولاً</span>':''}</div>

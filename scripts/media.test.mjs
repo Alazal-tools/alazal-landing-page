@@ -8,7 +8,7 @@ const empty=()=>({videos:[],podcast:{title:'بودكاست معلم',episodes:[]
 const article={slug:'test-article',title:'عنوان المقال',author:'كاتب الاختبار',date:'2026-09-23',text:'الفقرة الأولى.\n\nالفقرة الثانية.\nسطر جديد.'};
 const video={id:'HJ-sBMqVRq4',title:'فيديو الاختبار',date:'2023-12-22',duration:'1:35:42'};
 
-test('The local hub includes videos and simple podcast episode links without story code',async()=>{
+test('The local hub includes podcast thumbnails, episode links and on-demand players',async()=>{
   const data=JSON.parse(await readFile('data/media.json','utf8'));
   const html=await readFile('media.html','utf8');
   validateMedia(data);
@@ -25,8 +25,9 @@ test('The local hub includes videos and simple podcast episode links without sto
   assert.equal(data.articles[0].author,'محمد صالح');
   assert(html.includes('href="articles/muallim-beyond-education.html"'));
   assert(!html.includes('youtube-link'));
-  assert.equal((html.match(/<button class="video-poster"/g)||[]).length,2);
-  for(const id of data.videos.map(v=>v.id))assert(html.includes(`data-video="${id}"`));
+  assert.equal((html.match(/<button class="video-poster"/g)||[]).length,3);
+  for(const id of [...data.videos,...data.podcast.episodes].map(v=>v.id))assert(html.includes(`data-video="${id}"`));
+  assert(html.includes('https://i.ytimg.com/vi/3vOQ5U0JVq4/maxresdefault.jpg'));
   assert(!html.includes('<iframe'));
   assert(!html.includes('video-play-label'));
   const redirect=await readFile('podcast/index.html','utf8');
@@ -60,7 +61,7 @@ test('Future content is ordered by publication date and podcast season/episode, 
   data.articles=[article];
   const html=renderMediaPage(data);
   assert(html.indexOf('data-video="QOQ37m_o0us"')<html.indexOf('data-video="HJ-sBMqVRq4"'));
-  assert(html.indexOf('>الحلقة 1 ')<html.indexOf('>الحلقة 8 '));
+  assert(html.indexOf('الموسم 1 · الحلقة 1')<html.indexOf('الموسم 1 · الحلقة 8'));
   assert(html.includes('data-load-more hidden'));
   assert(html.includes('href="articles/test-article.html"'));
   assert(html.includes('كاتب الاختبار'));
