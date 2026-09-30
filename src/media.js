@@ -59,8 +59,12 @@ document.querySelectorAll('[data-play-video]').forEach(poster=>poster.addEventLi
   if(!/^[a-zA-Z0-9_-]{11}$/.test(id))return;
   event.preventDefault();stopPlayer();
   const player=document.createElement('iframe');
-  const url=new URL(`https://www.youtube.com/embed/${id}`);
-  url.search=new URLSearchParams({autoplay:'1',rel:'0',playsinline:'1',hl:'ar',origin:location.origin}).toString();
+  const playlist=frame.dataset.playlist;
+  if(playlist&&!/^PL[a-zA-Z0-9_-]+$/.test(playlist))return;
+  const url=new URL(`https://www.youtube.com/embed/${playlist?'videoseries':id}`);
+  const params=new URLSearchParams({autoplay:'1',rel:'0',playsinline:'1',hl:'ar',origin:location.origin});
+  if(playlist)params.set('list',playlist);
+  url.search=params.toString();
   player.src=url.href;
   player.title=poster.closest('article').querySelector('h3').textContent;
   player.allow='autoplay; encrypted-media; picture-in-picture; fullscreen; web-share';

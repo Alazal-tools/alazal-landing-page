@@ -8,6 +8,7 @@ const dateLabel = date => new Intl.DateTimeFormat('ar-IQ',{day:'numeric',month:'
 export function validateMedia(data) {
   if (!Array.isArray(data.videos) || !text(data.podcast?.title) || !Array.isArray(data.podcast.episodes) || !Array.isArray(data.articles)) throw new Error('Media needs videos, podcast.title, podcast.episodes and articles.');
   const ids=new Set(),episodes=new Set(),slugs=new Set();
+  if (data.podcast.playlistId && !/^PL[a-zA-Z0-9_-]+$/.test(data.podcast.playlistId)) throw new Error('Invalid podcast playlist ID.');
   for (const entry of [...data.videos,...data.podcast.episodes]) {
     if (typeof entry.id!=='string' || entry.id.length!==11 || !/^[a-zA-Z0-9_-]{11}$/.test(entry.id) || !text(entry.title) || !validDate(entry.date)) throw new Error('Every video needs a YouTube ID, title and YYYY-MM-DD date.');
     if (ids.has(entry.id)) throw new Error(`Duplicate video: ${entry.id}`);
@@ -32,20 +33,20 @@ const playIcon='<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="tru
 const time = date => `<time datetime="${escapeHTML(date)}">${dateLabel(date)}</time>`;
 const readingTime = article => `${new Intl.NumberFormat('ar-IQ').format(Math.max(1,Math.ceil(article.text.trim().split(/\s+/).length/180)))} دقائق قراءة`;
 
-export function videoCard(video,isEpisode=false) {
+export function videoCard(video,isEpisode=false,playlist=null) {
   const title=escapeHTML(video.title);
   const label=isEpisode?`الموسم ${video.season} · الحلقة ${video.episode}`:'فيديو';
   return `<article class="media-card" id="video-${video.id}" data-media-card>
-    <div class="video-frame" data-video="${video.id}">
+    <div class="video-frame" data-video="${video.id}"${playlist?` data-playlist="${escapeHTML(playlist)}"`:''}>
       <button class="video-poster" type="button" data-play-video aria-label="تشغيل ${title}">
         <img src="https://i.ytimg.com/vi/${video.id}/maxresdefault.jpg" data-thumbnail="${video.id}" width="1280" height="720" loading="lazy" decoding="async" alt=""/>
         <span class="video-play">${playIcon}</span><span class="video-play-label">تشغيل الفيديو</span>
-        ${video.duration?`<span class="video-duration" dir="ltr">${escapeHTML(video.duration)}</span>`:''}
+        ${video.duration&&!playlist?`<span class="video-duration" dir="ltr">${escapeHTML(video.duration)}</span>`:''}
       </button>
     </div>
-    <div class="media-card-meta"><span>${label}</span>${time(video.date)}</div>
+    <div class="media-card-meta"><span>${playlist?'قائمة الحلقات':label}</span>${playlist?'':time(video.date)}</div>
     <h3>${title}</h3>
-    ${isEpisode&&video.guest?`<p class="episode-guest">مع ${escapeHTML(video.guest)}</p>`:''}
+    ${playlist?'<p class="episode-guest">شاهد جميع الحلقات من قائمة البودكاست.</p>':isEpisode&&video.guest?`<p class="episode-guest">مع ${escapeHTML(video.guest)}</p>`:''}
   </article>`;
 }
 
@@ -139,7 +140,7 @@ export function renderMediaPage(data,versions) {
     </section>
     <section id="podcast" class="media-panel" aria-labelledby="tab-podcast" data-media-panel>
       <div class="media-section-heading"><h2>${escapeHTML(data.podcast.title)}</h2></div>
-      ${episodes.length?collection(episodes.map(v=>videoCard(v,true))):'<p class="media-empty">الحلقات قريباً.</p>'}
+      ${episodes.length?collection(data.podcast.playlistId?[videoCard({...episodes[0],title:data.podcast.title},true,data.podcast.playlistId)]:episodes.map(v=>videoCard(v,true))):'<p class="media-empty">الحلقات قريباً.</p>'}
     </section>
     <section id="articles" class="media-panel" aria-labelledby="tab-articles" data-media-panel>
       <div class="media-section-heading"><h2>المقالات</h2>${articles.length?'<span>الأحدث أولاً</span>':''}</div>

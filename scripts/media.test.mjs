@@ -17,7 +17,9 @@ test('The local hub includes the supplied videos without loading players or stor
   assert.equal(data.podcast.episodes[0].id,'3vOQ5U0JVq4');
   assert.equal(data.podcast.episodes[0].season,1);
   assert.equal(data.podcast.episodes[0].episode,1);
-  assert(html.includes('الموسم 1 · الحلقة 1'));
+  assert.equal(data.podcast.playlistId,'PLODw1CMx1wDc');
+  assert(html.includes('data-playlist="PLODw1CMx1wDc"'));
+  assert(html.includes('قائمة الحلقات'));
   assert(!html.includes('الحلقات قريباً.'));
   assert.equal(data.articles.length,1);
   assert.equal(data.articles[0].author,'محمد صالح');
