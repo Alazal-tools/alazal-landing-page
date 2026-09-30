@@ -140,7 +140,10 @@ export function renderMediaPage(data,versions) {
     </section>
     <section id="podcast" class="media-panel" aria-labelledby="tab-podcast" data-media-panel>
       <div class="media-section-heading"><h2>${escapeHTML(data.podcast.title)}</h2></div>
-      ${data.podcast.playlistId?`<div class="podcast-player video-frame"><iframe data-playlist-src="https://www.youtube.com/embed/videoseries?list=${escapeHTML(data.podcast.playlistId)}&amp;rel=0&amp;playsinline=1&amp;hl=ar" title="${escapeHTML(data.podcast.title)} — قائمة الحلقات" loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen; web-share" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div><a class="podcast-link" href="podcast/">جميع الحلقات على YouTube <span aria-hidden="true">↗</span></a>`:episodes.length?collection(episodes.map(v=>videoCard(v,true))):'<p class="media-empty">الحلقات قريباً.</p>'}
+      ${episodes.length?collection(episodes.map(episode=>`<article class="media-card podcast-episode" data-media-card>
+        <h3><a href="https://www.youtube.com/watch?v=${escapeHTML(episode.id)}" target="_blank" rel="noopener noreferrer">${escapeHTML(episode.title)} <span aria-hidden="true">↗</span></a></h3>
+        ${episode.guest?`<p class="episode-guest">ضيف الحلقة: ${escapeHTML(episode.guest)}</p>`:''}
+      </article>`),'articles'):'<p class="media-empty">الحلقات قريباً.</p>'}
     </section>
     <section id="articles" class="media-panel" aria-labelledby="tab-articles" data-media-panel>
       <div class="media-section-heading"><h2>المقالات</h2>${articles.length?'<span>الأحدث أولاً</span>':''}</div>

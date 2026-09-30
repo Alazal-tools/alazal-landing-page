@@ -30,9 +30,9 @@
 .video-poster:focus-visible { outline-offset:-4px; outline-color:var(--teal); }
 .video-play { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:1; display:grid; place-items:center; width:68px; height:68px; color:var(--navy); background:var(--teal); border-radius:50%; }
 .video-play svg { width:29px; height:29px; margin-left:3px; }
-.podcast-player { max-width:960px; }
-.podcast-link { display:inline-flex; align-items:center; gap:12px; min-height:48px; margin-top:16px; color:var(--teal); }
-.podcast-link:hover { color:var(--mint); }
+.podcast-episode { padding-block:24px; border-bottom:1px solid var(--line); }
+.podcast-episode h3 { margin-top:0; }
+.podcast-episode h3 a:hover,.podcast-episode h3 a span { color:var(--teal); }
 .video-poster:hover .video-play { background:var(--mint); }
 .video-duration { position:absolute; z-index:1; left:16px; bottom:16px; padding:1px 7px; background:#0b0038e8; color:white; font-size:12px; border-radius:3px; }
 .media-card-meta { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 16px; margin-top:18px; font-size:12px; color:var(--muted); }
